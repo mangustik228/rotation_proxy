@@ -1,1 +1,1 @@
-from .models import Base, Proxy, Error
+from .models import Base, Proxy, Error, ProxyType

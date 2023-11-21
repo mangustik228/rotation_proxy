@@ -4,6 +4,12 @@ from sqlalchemy import ForeignKey, DateTime, UniqueConstraint
 from app.db_postgres import Base
 
 
+class ProxyType(Base):
+    __tablename__ = "type"
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    title: Mapped[str] = mapped_column(unique=True, nullable=False)
+
+
 class Proxy(Base):
     __tablename__ = "proxy"
     id: Mapped[int] = mapped_column(autoincrement=True, primary_key=True)
@@ -16,6 +22,7 @@ class Proxy(Base):
     location: Mapped[str] = mapped_column(nullable=True)
     created_at: Mapped[datetime] = mapped_column(
         DateTime, default=datetime.now)
+    type_id: Mapped[int] = mapped_column(ForeignKey("type.id"))
     errors: Mapped[list["Error"] | None] = relationship(back_populates="proxy")
     __table_args__ = (UniqueConstraint(
         'username',

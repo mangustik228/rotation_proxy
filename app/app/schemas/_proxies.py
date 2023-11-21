@@ -11,6 +11,7 @@ class ProxyBase(BaseModel):
     expire: date | datetime
     service: str | None
     location: str | None
+    type_id: int | None = 1
 
     @field_validator('server')
     def valid_server(cls, v):

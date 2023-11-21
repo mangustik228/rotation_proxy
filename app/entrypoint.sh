@@ -10,6 +10,7 @@ echo "Waiting for redis..."
 while ! nc -z db_redis 6379; do
   sleep 1
 done
+
 echo "Redis started"
 
 alembic upgrade head

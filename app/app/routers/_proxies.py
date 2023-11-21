@@ -15,7 +15,8 @@ async def get_proxies(service: str | None = None,
                       count: int = 25,
                       format: str = "short",
                       app_type: str = "playwright",
-                      expire: datetime = datetime.utcnow()):
+                      expire: datetime = datetime.utcnow(),
+                      type_id: int | None = 1):
     '''
     Get current proxies:   
     **format:** Literal["full", "queue", "short"]
