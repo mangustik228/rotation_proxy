@@ -1,0 +1,82 @@
+[
+{
+    "password": "mgbsi2",
+    "server": "85.209.105.190",
+    "expire": "2022-09-27T00:00:00",
+    "username": "user90481",
+    "port": 9971,
+    "service": "proxy_io"
+},
+{
+    "password": "mgbsi2",
+    "server": "85.209.107.182",
+    "expire": "2025-09-27T00:00:00",
+    "username": "user90481",
+    "port": 9971,
+    "service": "proxy_io"
+},
+{
+    "password": "mgbsi2",
+    "server": "85.209.105.0",
+    "expire": "2025-09-27T00:00:00",
+    "username": "user90481",
+    "port": 9971,
+    "service": "proxy_io"
+},
+{
+    "password": "mgbsi2",
+    "server": "85.209.105.174",
+    "expire": "2025-09-27T00:00:00",
+    "username": "user90481",
+    "port": 9971,
+    "service": "proxy_io"
+},
+{
+    "password": "mgbsi2",
+    "server": "85.209.107.211",
+    "expire": "2025-09-27T00:00:00",
+    "username": "user90481",
+    "port": 9971,
+    "service": "proxy_io"
+},
+{
+    "password": "mgbsi2",
+    "server": "85.209.107.157",
+    "expire": "2025-09-27T00:00:00",
+    "username": "user90481",
+    "port": 9971,
+    "service": "proxy_io"
+},
+{
+    "password": "mgbsi2",
+    "server": "85.209.107.243",
+    "expire": "2025-09-27T00:00:00",
+    "username": "user90481",
+    "port": 9971,
+    "service": "proxy_io"
+},
+{
+    "password": "mgbsi2",
+    "server": "85.209.107.230",
+    "expire": "2025-09-27T00:00:00",
+    "username": "user90481",
+    "port": 9971,
+    "service": "proxy_io"
+},
+{
+    "password": "mgbsi2",
+    "server": "193.33.48.69",
+    "expire": "2025-09-27T00:00:00",
+    "username": "user90481",
+    "port": 9971,
+    "service": "proxy_io"
+},
+{
+    "password": "mgbsi2",
+    "server": "85.209.107.106",
+    "expire": "2025-09-27T00:00:00",
+    "username": "user90481",
+    "port": 9971,
+    "service": "proxy_io"
+}
+]

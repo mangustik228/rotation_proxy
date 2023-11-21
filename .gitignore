@@ -1,0 +1,82 @@
+# main files
+.env
+.venv
+test.py 
+terminal.ipynb
+# folders 
+app/venv 
+app/.pytest_cache
+app/.vscode 
+
+db_postgres/data/
+.vscode/
+logs/*
+src/*
+ouput/*
+input/*
+env/
+env.bak/
+venv/
+venv.bak/
+migrations/
+downloads/
+sources/
+develop-eggs/
+__pycache__/
+.pytest_cache/
+.mypy_cache/
+.ipynb_checkpoints/
+var/
+wheels/
+lib/
+lib64/
+parts/
+sdist/
+eggs/
+.eggs/
+*.egg-info/
+build/
+dist/
+.cache/
+__pypackages__/
+
+
+# front 
+node_modules
+.vscode
+dist
+source
+ftp.js 
+
+# extensions
+*.session
+*.sqlite3
+*.sqlite
+*.sql
+*.database
+*.db
+*.csv
+*.xlsx
+*.xlsb
+*.log
+*.mo
+*.pot
+*.so
+*.py[cod]
+*$py.class
+*.egg
+*.manifest
+*.spec
+
+# files
+.installed.cfg
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Scrapy stuff:
+.scrapy
+
+
+# Celery stuff
+celerybeat-schedule
+celerybeat.pid
