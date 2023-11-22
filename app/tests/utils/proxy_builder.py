@@ -10,6 +10,8 @@ class ProxyBuilder:
         self.data["password"] = "password-123"
         self.data["port"] = 8000
         self.data["service"] = "google.com"
+        self.data["location"] = "Russia"
+        self.data["type_id"] = 1
 
     def delete_field(self, name: str) -> None:
         self.data.pop(name)

@@ -9,8 +9,8 @@ class ProxyBase(BaseModel):
     password: str
     port: int
     expire: date | datetime
-    service: str | None
-    location: str | None
+    service: str | None = None
+    location: str | None = "Russia"
     type_id: int | None = 1
 
     @field_validator('server')

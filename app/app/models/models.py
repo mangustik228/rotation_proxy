@@ -22,7 +22,7 @@ class Proxy(Base):
     location: Mapped[str] = mapped_column(nullable=True)
     created_at: Mapped[datetime] = mapped_column(
         DateTime, default=datetime.now)
-    type_id: Mapped[int] = mapped_column(ForeignKey("type.id"))
+    type_id: Mapped[int] = mapped_column(ForeignKey("type.id"), default=1)
     errors: Mapped[list["Error"] | None] = relationship(back_populates="proxy")
     __table_args__ = (UniqueConstraint(
         'username',

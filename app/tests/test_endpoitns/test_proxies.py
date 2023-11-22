@@ -1,5 +1,7 @@
 from httpx import AsyncClient
 import os
+
+import pytest
 from tests.utils import ProxyBuilder
 
 
@@ -24,3 +26,14 @@ async def test_post_proxies(async_client: AsyncClient):
 
     response = await async_client.post("/proxies", json=data)
     assert response.status_code == 409
+
+
+async def test_post_proxies_with_minimum_settings(async_client: AsyncClient):
+    proxy_builder = ProxyBuilder()
+    proxy_builder.delete_field("location")
+    proxy_builder.delete_field("type_id")
+    data = proxy_builder.build()
+    print(data)
+    response = await async_client.post("/proxies", json=data)
+    assert response.status_code == 201
+    assert response.json() == {"status": "ok"}

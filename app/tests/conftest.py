@@ -5,6 +5,7 @@ import asyncio
 from httpx import AsyncClient
 import pytest
 from sqlalchemy import insert
+from sqlalchemy import text
 
 from app.main import app as fastapi_app
 from app.db_postgres import engine, async_session
@@ -38,6 +39,8 @@ async def update_db():
     async with engine.begin() as conn:
         await conn.run_sync(M.Base.metadata.drop_all)
         await conn.run_sync(M.Base.metadata.create_all)
+        await conn.execute(text("INSERT INTO type(title) Values('IPv4')"))
+        await conn.commit()
 
 
 @pytest.fixture(autouse=True, scope="session")
