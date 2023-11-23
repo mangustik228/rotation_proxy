@@ -1,4 +1,6 @@
+import logging
 import os
+from loguru import logger
 
 if True:
     os.environ["MODE"] = "TEST"
@@ -41,6 +43,7 @@ async def insert_proxies():
 async def update_db():
     assert os.getenv("MODE") == "TEST", "base is not test"
     alembic_cfg = Config("alembic.ini")
+    alembic_cfg.set_section_option("logger_alembic", "level", "WARN")
     command.downgrade(alembic_cfg, "base")
     command.upgrade(alembic_cfg, "head")
 
@@ -50,7 +53,22 @@ async def prepare_db():
     await update_db()
 
 
+@pytest.fixture(scope="session", autouse=True)
+def disallow_loguru_logger():
+    while True:
+        try:
+            logger.remove(0)
+        except ValueError:
+            break
+
+
+@pytest.fixture(scope="session", autouse=True)
+def disallow_logging():
+    logging.disable(logging.INFO)
+    ...
 # Из документации pytest
+
+
 @pytest.fixture(scope='session')
 def event_loop(request):
     loop = asyncio.get_event_loop_policy().new_event_loop()
@@ -58,8 +76,8 @@ def event_loop(request):
     loop.close()
 
 
-@pytest.fixture(scope="session")
-async def clean_db():
+@pytest.fixture()
+async def clear_db():
     yield
     await update_db()
 

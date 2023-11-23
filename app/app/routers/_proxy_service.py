@@ -9,7 +9,9 @@ router = APIRouter(prefix="/services", tags=["SERVICES"])
 @router.get("/{id}", response_model=S.ProxyService)
 async def get_service(id: int):
     result = await R.ProxyService.get_by_id(id)
-    return result
+    if result:
+        return result
+    raise HTTPException(status.HTTP_404_NOT_FOUND)
 
 
 @router.get("", response_model=S.GetResponseProxyServiceList)
@@ -35,5 +37,7 @@ async def post_service(data: S.PostRequestProxyService = Body()):
 @router.put("/{id}", status_code=status.HTTP_201_CREATED)
 async def change_service_name(id: int, data: S.PutRequestProxyService = Body()):
     result = await R.ProxyService.update(id, **data.model_dump())
-    return {"status": "success",
-            "service": result}
+    if result:
+        return {"status": "success", "service": result}
+    else:
+        raise HTTPException(status.HTTP_404_NOT_FOUND)

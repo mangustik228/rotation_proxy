@@ -1,1 +1,1 @@
-from .builders import ProxyBuilder, ProxyServiceBuilder
+from .builders import ProxyBuilder, ProxyServiceBuilder, LocationBuilder
