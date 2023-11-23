@@ -1,4 +1,4 @@
-from .repo_base import BaseRepo
+from .base_repo import BaseRepo
 import app.models as M
 
 

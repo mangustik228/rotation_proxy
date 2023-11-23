@@ -4,14 +4,14 @@ from fastapi import APIRouter, status, Body
 import app.schemas as S
 import app.repo as R
 from app.services import ProxyFormater
+from app.exceptions import DuplicateKey
 
-
-router = APIRouter(prefix="/proxies")
+router = APIRouter(prefix="/proxies", tags=["PROXIES"])
 
 
 @router.get("")
 async def get_proxies(service: str | None = None,
-                      location: str | None = None,
+                      location_id: int | None = 1,
                       count: int = 25,
                       format: str = "short",
                       app_type: str = "playwright",
@@ -55,14 +55,13 @@ async def change_proxy(data: S.ProxyBase = Body()):
 
 @router.post("", status_code=status.HTTP_201_CREATED)
 async def post_proxies(data: list[S.ProxyBase] = Body()):
-    result = await R.Proxy.add_many(data)
-
-    if result == "success":
+    try:
+        await R.Proxy.add_many(data)
         return {"status": "ok"}
-    else:
-        print(result)
-        raise HTTPException(status_code=status.HTTP_409_CONFLICT,
-                            detail=result)
+    except DuplicateKey as e:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail=str(e))
 
 
 @router.patch("/{id}", status_code=status.HTTP_204_NO_CONTENT)

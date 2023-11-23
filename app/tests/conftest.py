@@ -1,21 +1,25 @@
-import json
 import os
+
+if True:
+    os.environ["MODE"] = "TEST"
+
+import json
 from datetime import datetime
+import pytest
 import asyncio
 from httpx import AsyncClient
-import pytest
 from sqlalchemy import insert
-from sqlalchemy import text
 
-from app.main import app as fastapi_app
-from app.db_postgres import engine, async_session
 import app.models as M
+from app.db_postgres import engine, async_session
+from app.main import app as fastapi_app
 
-os.environ["MODE"] = "TEST"
+from alembic import command
+from alembic.config import Config
 
 
 @pytest.fixture()
-async def async_client() -> AsyncClient:
+async def client() -> AsyncClient:
     async with AsyncClient(app=fastapi_app, base_url="http://test") as ac:
         yield ac
 
@@ -36,11 +40,9 @@ async def insert_proxies():
 
 async def update_db():
     assert os.getenv("MODE") == "TEST", "base is not test"
-    async with engine.begin() as conn:
-        await conn.run_sync(M.Base.metadata.drop_all)
-        await conn.run_sync(M.Base.metadata.create_all)
-        await conn.execute(text("INSERT INTO type(title) Values('IPv4')"))
-        await conn.commit()
+    alembic_cfg = Config("alembic.ini")
+    command.downgrade(alembic_cfg, "base")
+    command.upgrade(alembic_cfg, "head")
 
 
 @pytest.fixture(autouse=True, scope="session")
@@ -54,6 +56,12 @@ def event_loop(request):
     loop = asyncio.get_event_loop_policy().new_event_loop()
     yield loop
     loop.close()
+
+
+@pytest.fixture(scope="session")
+async def clean_db():
+    yield
+    await update_db()
 
 
 # class _NameSpace:

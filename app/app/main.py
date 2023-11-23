@@ -7,6 +7,7 @@ from loguru import logger
 app = FastAPI()
 
 app.include_router(routers.proxies)
+app.include_router(routers.proxy_service)
 
 
 @app.get("/home")

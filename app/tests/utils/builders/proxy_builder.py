@@ -1,20 +1,17 @@
 from datetime import datetime, timedelta
+from .base_builder import BaseBuilder
 
 
-class ProxyBuilder:
-    def __init__(self):
-        self.data = {}
+class ProxyBuilder(BaseBuilder):
+    def set_default_value(self):
         self.data["expire"] = (datetime.now() + timedelta(days=5)).isoformat()
         self.data["server"] = "127.0.0.1"
         self.data["username"] = "username-123"
         self.data["password"] = "password-123"
         self.data["port"] = 8000
-        self.data["service"] = "google.com"
-        self.data["location"] = "Russia"
+        self.data["service_id"] = 1
+        self.data["location_id"] = 1
         self.data["type_id"] = 1
-
-    def delete_field(self, name: str) -> None:
-        self.data.pop(name)
 
     def set_expire(self, date: str | datetime):
         if isinstance(date, datetime):
@@ -22,8 +19,8 @@ class ProxyBuilder:
         else:
             self.data["expire"] = date
 
-    def set_service(self, service: str) -> None:
-        self.data["service"] = service
+    def set_service_id(self, service_id: int) -> None:
+        self.data["service"] = service_id
 
     def set_server(self, server: str) -> None:
         self.data["server"] = server
@@ -36,6 +33,3 @@ class ProxyBuilder:
 
     def set_port(self, port: str) -> None:
         self.data["port"] = port
-
-    def build(self):
-        return [self.data]

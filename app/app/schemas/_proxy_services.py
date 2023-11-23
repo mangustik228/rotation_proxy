@@ -1,0 +1,32 @@
+from typing import Literal
+from pydantic import BaseModel, ConfigDict
+
+
+class ProxyService(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    id: int
+    name: str
+
+
+class GetResponseProxyServiceList(BaseModel):
+    services: list[ProxyService]
+
+
+class PostRequestProxyService(BaseModel):
+    name: str
+
+
+class PostResponseProxyService(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    status: Literal["success"]
+    service: ProxyService
+
+
+class PutRequestProxyService(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    name: str
+
+
+class PutResponseProxyService(BaseModel):
+    status: Literal["success"]
+    service: ProxyService

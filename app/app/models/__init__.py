@@ -1,1 +1,1 @@
-from .models import Base, Proxy, Error, ProxyType
+from .models import Base, Proxy, Error, ProxyType, Service

@@ -18,7 +18,6 @@ env/
 env.bak/
 venv/
 venv.bak/
-migrations/
 downloads/
 sources/
 develop-eggs/
