@@ -9,6 +9,7 @@ app = FastAPI()
 app.include_router(routers.proxies)
 app.include_router(routers.proxy_service)
 app.include_router(routers.location)
+app.include_router(routers.proxy_type)
 
 
 @app.get("/home")

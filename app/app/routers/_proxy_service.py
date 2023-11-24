@@ -3,7 +3,15 @@ import app.repo as R
 import app.schemas as S
 from app.exceptions import DuplicateKey
 
-router = APIRouter(prefix="/services", tags=["SERVICES"])
+router = APIRouter(prefix="/services",
+                   tags=["SERVICES"])
+
+
+@router.get("", response_model=S.GetResponseProxyServiceList)
+async def get_services():
+    # R.ProxyService.
+    result = await R.ProxyService.get_all()
+    return {"services": result}
 
 
 @router.get("/{id}", response_model=S.ProxyService)
@@ -12,13 +20,6 @@ async def get_service(id: int):
     if result:
         return result
     raise HTTPException(status.HTTP_404_NOT_FOUND)
-
-
-@router.get("", response_model=S.GetResponseProxyServiceList)
-async def get_services():
-    # R.ProxyService.
-    result = await R.ProxyService.get_all()
-    return {"services": result}
 
 
 @router.post("",

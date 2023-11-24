@@ -2,5 +2,5 @@ from .base_repo import BaseRepo
 import app.models as M
 
 
-class Type(BaseRepo):
+class ProxyType(BaseRepo):
     model = M.ProxyType

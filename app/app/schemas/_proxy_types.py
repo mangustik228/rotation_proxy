@@ -1,5 +1,5 @@
 from typing import Literal
-from pydantic import ConfigDict, BaseModel
+from pydantic import ConfigDict, BaseModel, Field
 
 
 class ProxyType(BaseModel):
@@ -21,15 +21,16 @@ class PostRequestProxyType(BaseModel):
 
 
 class PostResponseProxyType(BaseModel):
-    name: str
+    model_config = ConfigDict(from_attributes=True)
     status: Literal["success"]
-    _type: ProxyType
+    proxy_type: ProxyType = Field(alias="type")
 
 
 class PutRequestProxyType(BaseModel):
-    id: int
+    name: str
 
 
 class PutResponseProxyType(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
     status: Literal["success"]
-    _type: ProxyType
+    proxy_type: ProxyType = Field(alias="type")
