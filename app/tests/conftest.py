@@ -18,11 +18,16 @@ from app.main import app as fastapi_app
 
 from alembic import command
 from alembic.config import Config
+from app.config import settings
 
 
 @pytest.fixture()
 async def client() -> AsyncClient:
-    async with AsyncClient(app=fastapi_app, base_url="http://test") as ac:
+    async with AsyncClient(
+            app=fastapi_app,
+            base_url="http://test",
+            headers={"X-API-Key": settings.APIKEY}
+    ) as ac:
         yield ac
 
 
