@@ -2,7 +2,6 @@ import sys
 from loguru import logger
 from app.config import settings
 import os
-from sqlalchemy.exc import SQLAlchemyError, IntegrityError
 
 
 class ConfigLogging:

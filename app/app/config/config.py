@@ -44,6 +44,7 @@ class _Settings(BaseSettings):
     db: _Database = _Database()
     logs: _Logs = _Logs()
     name: str = _config_ini.get('default', 'name')
+    APIKEY: str
 
 
 settings = _Settings()
