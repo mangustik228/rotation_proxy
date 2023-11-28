@@ -32,7 +32,7 @@ async def client() -> AsyncClient:
 
 
 @pytest.fixture
-async def insert_proxies():
+async def insert_proxies_10_proxies():
     with open(f'tests/src/proxies.json', "r") as file:
         data = json.load(file)
     for datum in data:

@@ -33,8 +33,6 @@ async def test_put_services(client: AsyncClient, clear_db):
     response = await client.put("/services/1", json=service)
     assert response.status_code == 201
 
-    # assert response.status_code == 201
-
 
 async def test_get_one(client: AsyncClient):
     response = await client.get("/services/1")

@@ -22,7 +22,7 @@ class PostRequestProxyType(BaseModel):
 
 class PostResponseProxyType(BaseModel):
     model_config = ConfigDict(from_attributes=True)
-    status: Literal["success"]
+    status: Literal["created"]
     proxy_type: ProxyType = Field(alias="type")
 
 
@@ -32,5 +32,5 @@ class PutRequestProxyType(BaseModel):
 
 class PutResponseProxyType(BaseModel):
     model_config = ConfigDict(from_attributes=True)
-    status: Literal["success"]
+    status: Literal["updated"]
     proxy_type: ProxyType = Field(alias="type")

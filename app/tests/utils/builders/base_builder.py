@@ -16,7 +16,7 @@ class BaseBuilder(ABC):
         self.data.pop(name)
 
     def build(self):
-        return self.data
+        return self.data.copy()
 
     def build_list(self):
         return [self.data]

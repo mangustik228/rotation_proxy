@@ -26,18 +26,18 @@ async def get_type(id: int):
 async def post_proxy_type(data: S.PostRequestProxyType = Body()):
     try:
         result = await R.ProxyType.add_one(**data.model_dump())
-        return {"status": "success", "type": result}
+        return {"status": "created", "type": result}
     except DuplicateKey:
         raise HTTPException(status.HTTP_409_CONFLICT,
                             detail="item is already exist")
 
 
-@router.put("/{id}", response_model=S.PostResponseProxyType, status_code=status.HTTP_201_CREATED)
+@router.put("/{id}", response_model=S.PutResponseProxyType, status_code=status.HTTP_201_CREATED)
 async def change_proxy(id: int, data: S.PutRequestProxyType):
     try:
         result = await R.ProxyType.update(id, **data.model_dump())
         if result:
-            return {"status": "success", "type": result}
+            return {"status": "updated", "type": result}
         else:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
     except DuplicateKey:

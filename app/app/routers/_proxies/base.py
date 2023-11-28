@@ -37,7 +37,7 @@ async def post_proxies(data: S.PostRequestProxy = Body()):
         result = await R.Proxy.add_one(**data.model_dump())
         return {"status": "success",
                 "proxy": result}
-    except DuplicateKey:
+    except DuplicateKey as e:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
             detail="proxy is already exist.")
@@ -53,13 +53,29 @@ async def post_bulk_proxies(data: list[S.PostRequestProxy] = Body()):
         try:
             await R.Proxy.add_one(**datum.model_dump())
             success += 1
-        except:
+        except Exception as e:
+            print(str(e))
             errors += 1
     return {
-        "status": "success",
+        "status": "created",
         "count_added": success,
         "count_errors": errors
     }
+
+
+@router.put("/{id}", status_code=201, response_model=S.PutResponseProxy)
+async def update_proxy(id: int, data: S.PutRequestProxy):
+    try:
+        result = await R.Proxy.update(id, **data.model_dump())
+        if result:
+            return {
+                "status": "updated",
+                "proxy": result
+            }
+        else:
+            raise HTTPException(status.HTTP_404_NOT_FOUND)
+    except DuplicateKey as e:
+        raise HTTPException(status.HTTP_409_CONFLICT, str(e))
 
 
 # @router.patch("/{id}", status_code=status.HTTP_204_NO_CONTENT)

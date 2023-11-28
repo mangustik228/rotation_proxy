@@ -19,7 +19,7 @@ class PostRequestProxyService(BaseModel):
 
 class PostResponseProxyService(BaseModel):
     model_config = ConfigDict(from_attributes=True)
-    status: Literal["success"]
+    status: Literal["created"]
     service: ProxyService
 
 
@@ -29,5 +29,5 @@ class PutRequestProxyService(BaseModel):
 
 
 class PutResponseProxyService(BaseModel):
-    status: Literal["success"]
+    status: Literal["updated"]
     service: ProxyService

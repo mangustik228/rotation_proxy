@@ -31,7 +31,7 @@ async def post_service(data: S.PostRequestProxyService = Body()):
         raise HTTPException(status.HTTP_409_CONFLICT, str(e))
     except Exception as e:
         raise HTTPException(status.HTTP_400_BAD_REQUEST, str(e))
-    return {"status": "success",
+    return {"status": "created",
             "service": result}
 
 
@@ -39,6 +39,6 @@ async def post_service(data: S.PostRequestProxyService = Body()):
 async def change_service_name(id: int, data: S.PutRequestProxyService = Body()):
     result = await R.ProxyService.update(id, **data.model_dump())
     if result:
-        return {"status": "success", "service": result}
+        return {"status": "updated", "service": result}
     else:
         raise HTTPException(status.HTTP_404_NOT_FOUND)

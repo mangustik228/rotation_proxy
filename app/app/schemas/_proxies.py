@@ -16,9 +16,15 @@ class Proxy(BaseModel):
     expire: date | datetime
 
 
+class ProxyLight(Proxy):
+    service_id: int
+    type_id: int
+    location_id: int
+
+
 class PostResponseProxy(BaseModel):
     model_config = ConfigDict(from_attributes=True)
-    status: Literal["success"]
+    status: Literal["created"]
     proxy: Proxy
 
 
@@ -36,7 +42,7 @@ class GetResponseProxyList(BaseModel):
 
 
 class PostResponseProxyList(BaseModel):
-    status: Literal["success"]
+    status: Literal["created"]
     count_added: int
     count_errors: int
 
@@ -57,3 +63,12 @@ class PostRequestProxy(BaseModel):
             return re.findall(r'\d+\.\d+\.\d+\.\d+', v)[0]
         except:
             raise ValueError(f'Uncorrect field "server": {v}')
+
+
+class PutRequestProxy(PostRequestProxy):
+    ...
+
+
+class PutResponseProxy(BaseModel):
+    status: Literal["updated"]
+    proxy: ProxyLight

@@ -23,7 +23,7 @@ class PostRequestLocation(BaseModel):
 
 class PostResponseLocation(BaseModel):
     model_config = ConfigDict(from_attributes=True)
-    status: Literal["success"]
+    status: Literal["created"]
     location: Location
 
 
@@ -33,5 +33,5 @@ class PutRequestLocation(BaseModel):
 
 class PutResponseLocation(BaseModel):
     model_config = ConfigDict(from_attributes=True)
-    status: Literal["success"]
+    status: Literal["updated"]
     location: Location

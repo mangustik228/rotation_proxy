@@ -22,7 +22,7 @@ async def test_post_location(client: AsyncClient, clear_db):
     response = await client.post("/locations", json=location)
     assert response.status_code == 201
     data = response.json()
-    assert data["status"] == "success"
+    assert data["status"] == "created"
     assert data["location"]["name"] == "Cambodia"
 
 
@@ -50,7 +50,7 @@ async def test_put_location(client: AsyncClient, clear_db):
     response = await client.put("/locations/1", json=location)
     assert response.status_code == 201
     data = response.json()
-    assert data["status"] == "success"
+    assert data["status"] == "updated"
     assert data["location"]["name"] == "Cambodia"
 
     response = await client.get("/locations/1")

@@ -26,7 +26,7 @@ async def test_post_proxy(client: AsyncClient, clear_db):
     response = await client.post("/types", json=proxy_type)
     assert response.status_code == 201
     data = response.json()
-    assert data["status"] == "success"
+    assert data["status"] == "created"
     assert data["type"]["name"] == "IPv6"
 
 
@@ -42,7 +42,7 @@ async def test_put_proxy(client: AsyncClient, clear_db):
     response = await client.put("/types/1", json=proxy_type)
     assert response.status_code == 201
     data = response.json()
-    assert data["status"] == "success"
+    assert data["status"] == "updated"
     assert data["type"]["name"] == "IPv6"
 
 

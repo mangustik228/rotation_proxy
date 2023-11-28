@@ -5,7 +5,9 @@
     "expire": "2022-09-27T00:00:00",
     "username": "user90481",
     "port": 9971,
-    "service_id": 1
+    "service_id": 1,
+    "type_id": 1,
+    "location_id": 1
 },
 {
     "password": "mgbsi2",
@@ -13,7 +15,9 @@
     "expire": "2025-09-27T00:00:00",
     "username": "user90481",
     "port": 9971,
-    "service_id": 1
+    "service_id": 1,
+    "type_id": 1,
+    "location_id": 1
 },
 {
     "password": "mgbsi2",
@@ -21,7 +25,9 @@
     "expire": "2025-09-27T00:00:00",
     "username": "user90481",
     "port": 9971,
-    "service_id": 1
+    "service_id": 1,
+    "type_id": 1,
+    "location_id": 1
 },
 {
     "password": "mgbsi2",
@@ -29,7 +35,9 @@
     "expire": "2025-09-27T00:00:00",
     "username": "user90481",
     "port": 9971,
-    "service_id": 1
+    "service_id": 1,
+    "type_id": 1,
+    "location_id": 1
 },
 {
     "password": "mgbsi2",
@@ -37,7 +45,9 @@
     "expire": "2025-09-27T00:00:00",
     "username": "user90481",
     "port": 9971,
-    "service_id": 1
+    "service_id": 1,
+    "type_id": 1,
+    "location_id": 1
 },
 {
     "password": "mgbsi2",
@@ -45,7 +55,9 @@
     "expire": "2025-09-27T00:00:00",
     "username": "user90481",
     "port": 9971,
-    "service_id": 1
+    "service_id": 1,
+    "type_id": 1,
+    "location_id": 1
 },
 {
     "password": "mgbsi2",
@@ -53,7 +65,9 @@
     "expire": "2025-09-27T00:00:00",
     "username": "user90481",
     "port": 9971,
-    "service_id": 1
+    "service_id": 1,
+    "type_id": 1,
+    "location_id": 1
 },
 {
     "password": "mgbsi2",
@@ -61,7 +75,9 @@
     "expire": "2025-09-27T00:00:00",
     "username": "user90481",
     "port": 9971,
-    "service_id": 1
+    "service_id": 1,
+    "type_id": 1,
+    "location_id": 1
 },
 {
     "password": "mgbsi2",
@@ -69,7 +85,9 @@
     "expire": "2025-09-27T00:00:00",
     "username": "user90481",
     "port": 9971,
-    "service_id": 1
+    "service_id": 1,
+    "type_id": 1,
+    "location_id": 1
 },
 {
     "password": "mgbsi2",
@@ -77,6 +95,8 @@
     "expire": "2025-09-27T00:00:00",
     "username": "user90481",
     "port": 9971,
-    "service_id": 1
+    "service_id": 1,
+    "type_id": 1,
+    "location_id": 1
 }
 ]
