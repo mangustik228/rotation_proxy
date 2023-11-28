@@ -72,3 +72,19 @@ class PutRequestProxy(PostRequestProxy):
 class PutResponseProxy(BaseModel):
     status: Literal["updated"]
     proxy: ProxyLight
+
+
+class PutchRequestProxy(BaseModel):
+    server: str | None = None
+    username: str | None = None
+    password: str | None = None
+    port: int | None = None
+    expire: date | datetime | None = None
+    service_id: int | None = None
+    type_id: int | None = None
+    location_id: int | None = None
+
+
+class PutchResponseProxy(BaseModel):
+    status: Literal["updated"]
+    proxy: ProxyLight

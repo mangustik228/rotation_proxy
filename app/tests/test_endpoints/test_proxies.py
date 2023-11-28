@@ -1,3 +1,4 @@
+import asyncio
 import json
 from httpx import AsyncClient
 import os
@@ -12,22 +13,23 @@ async def test_get_proxies(client: AsyncClient, insert_proxies_10_proxies):
     data = response.json()
     assert data["total_count"] == 10
     assert data["total_active_count"] == 9
+    assert len(data["proxies"]) == 10
 
 
-async def test_post_proxy(client: AsyncClient):
+async def test_post_proxy(client: AsyncClient, clear_db):
     data = ProxyBuilder().build()
     response = await client.post("/proxies", json=data)
     assert response.status_code == 201
 
 
-async def test_post_proxy_dublicated(client: AsyncClient):
+async def test_post_proxy_dublicated(client: AsyncClient, clear_db):
     data = ProxyBuilder().build()
     for _ in range(2):
         response = await client.post("/proxies", json=data)
     assert response.status_code == 409
 
 
-async def test_post_proxy_bulk(client: AsyncClient):
+async def test_post_proxy_bulk(client: AsyncClient, clear_db):
     builder = ProxyBuilder()
     data = []
     for i in range(1, 15):
@@ -40,7 +42,7 @@ async def test_post_proxy_bulk(client: AsyncClient):
     assert response.json()["status"] == "created"
 
 
-async def test_put_proxy(client: AsyncClient, insert_proxies_10_proxies):
+async def test_put_proxy(client: AsyncClient, insert_proxies_10_proxies, clear_db):
     with open("./tests/src/proxies.json") as fp:
         data: list[dict] = json.load(fp)
     proxy = data[0]
@@ -50,7 +52,32 @@ async def test_put_proxy(client: AsyncClient, insert_proxies_10_proxies):
     assert response.json()["status"] == "updated"
 
 
-# async def test_get_proxies_empty(client: AsyncClient):
+async def test_delete_proxy(client: AsyncClient, insert_proxies_10_proxies, clear_db):
+    response = await client.delete("/proxies/1")
+    # assert response.status_code == 204
+    await asyncio.sleep(0.5)
+    response = await client.delete("/proxies/1")
+    assert response.status_code == 404
+
+
+async def test_putch_proxy(client: AsyncClient, insert_proxies_10_proxies, clear_db):
+    data = {"server": "192.0.123.3"}
+    response = await client.patch("/proxies/1", json=data)
+    assert response.status_code == 200
+    assert response.json()["status"] == "updated"
+
+
+async def test_putch_proxy_error(client: AsyncClient, insert_proxies_10_proxies, clear_db):
+    builder = ProxyBuilder()
+    builder.set_expire("2023-11-30")
+    data = builder.build()
+    for i in range(1, 3):
+        response = await client.patch(f"/proxies/{i}", json=data)
+    assert response.status_code == 409
+
+# async def
+#
+# test_get_proxies_empty(client: AsyncClient):
 #     result = await client.get("/proxies")
 #     assert result.status_code == 200
 #     assert len(result.json()) == 0

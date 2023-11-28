@@ -78,6 +78,30 @@ async def update_proxy(id: int, data: S.PutRequestProxy):
         raise HTTPException(status.HTTP_409_CONFLICT, str(e))
 
 
+@router.delete("/{id}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_proxy(id: int):
+    result = await R.Proxy.get_by_id(id)
+    if result is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="proxy doesn't exist")
+    else:
+        try:
+            await R.Proxy.delete(id=id)
+        except Exception as e:
+            logger.error(str(e))
+
+
+@router.patch("/{id}", response_model=S.PutchResponseProxy)
+async def patch_proxy(id: int, data: S.PutchRequestProxy = Body()):
+    try:
+        result = await R.Proxy.update_fields(id, **data.model_dump(exclude_unset=True))
+    except DuplicateKey as e:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail=str(e))
+    return {"status": "updated", "proxy": result}
+
+
 # @router.patch("/{id}", status_code=status.HTTP_204_NO_CONTENT)
 # async def update_proxy(id: int):
 #     ...
