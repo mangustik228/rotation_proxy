@@ -1,17 +1,55 @@
 from datetime import datetime, date
 import re
-from pydantic import BaseModel, field_validator
+from typing import Literal
+from pydantic import BaseModel, field_validator, ConfigDict, Field
+from ._proxy_services import ProxyService
+from ._proxy_types import ProxyType
+from ._locations import Location
 
 
-class ProxyBase(BaseModel):
+class Proxy(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
     server: str
     username: str
     password: str
     port: int
     expire: date | datetime
-    service_id: int | None
-    location_id: int | None = 1
-    type_id: int | None = 1
+
+
+class PostResponseProxy(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    status: Literal["success"]
+    proxy: Proxy
+
+
+class GetResponseProxy(Proxy):
+    service: ProxyService
+    proxy_type: ProxyType
+    location: Location
+
+
+class GetResponseProxyList(BaseModel):
+    total_count: int
+    total_active_count: int
+    status: Literal["success"]
+    proxies: list[GetResponseProxy]
+
+
+class PostResponseProxyList(BaseModel):
+    status: Literal["success"]
+    count_added: int
+    count_errors: int
+
+
+class PostRequestProxy(BaseModel):
+    server: str
+    username: str
+    password: str
+    port: int
+    expire: date | datetime
+    location_id: int = Field(gt=0)
+    type_id: int = Field(gt=0)
+    service_id: int = Field(gt=0)
 
     @field_validator('server')
     def valid_server(cls, v):
