@@ -1,9 +1,6 @@
 import asyncio
 import json
 from httpx import AsyncClient
-import os
-
-import pytest
 from tests.utils import ProxyBuilder
 
 
@@ -69,7 +66,7 @@ async def test_putch_proxy(client: AsyncClient, insert_proxies_10_proxies, clear
 
 async def test_putch_proxy_error(client: AsyncClient, insert_proxies_10_proxies, clear_db):
     builder = ProxyBuilder()
-    builder.set_expire("2023-11-30")
+    builder.set_expire("2023-11-30T00:00:00")
     data = builder.build()
     for i in range(1, 3):
         response = await client.patch(f"/proxies/{i}", json=data)

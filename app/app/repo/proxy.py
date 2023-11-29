@@ -63,3 +63,19 @@ class Proxy(BaseRepo):
             data = result.scalar()
             await session.commit()
             return data
+
+    @classmethod
+    async def get_available(cls, expire: datetime, location_id: int, type_id: int):
+        async with async_session() as session:
+            stmt = select(
+                M.Proxy.id,
+                M.Proxy.server,
+                M.Proxy.port,
+                M.Proxy.username,
+                M.Proxy.password,
+            ).filter(
+                M.Proxy.expire > expire,
+                M.Proxy.location_id == location_id,
+                M.Proxy.type_id == type_id)
+            result = await session.execute(stmt)
+            return result.mappings().all()

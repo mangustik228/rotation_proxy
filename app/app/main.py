@@ -7,11 +7,11 @@ import app.dependencies as dependencies
 
 app = FastAPI(dependencies=[Depends(dependencies.get_api_key)])
 
+app.include_router(routers.proxies_rotations)
 app.include_router(routers.proxies)
 app.include_router(routers.proxy_service)
 app.include_router(routers.location)
 app.include_router(routers.proxy_type)
-app.include_router(routers.proxies_rotations)
 
 api_key_header = APIKeyHeader(name="X-API-Key")
 

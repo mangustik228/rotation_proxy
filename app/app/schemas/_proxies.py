@@ -13,7 +13,7 @@ class Proxy(BaseModel):
     username: str
     password: str
     port: int
-    expire: date | datetime
+    expire: datetime
 
 
 class ProxyLight(Proxy):
@@ -52,7 +52,7 @@ class PostRequestProxy(BaseModel):
     username: str
     password: str
     port: int
-    expire: date | datetime
+    expire: datetime
     location_id: int = Field(gt=0)
     type_id: int = Field(gt=0)
     service_id: int = Field(gt=0)
@@ -79,7 +79,7 @@ class PutchRequestProxy(BaseModel):
     username: str | None = None
     password: str | None = None
     port: int | None = None
-    expire: date | datetime | None = None
+    expire: datetime | None = None
     service_id: int | None = None
     type_id: int | None = None
     location_id: int | None = None
