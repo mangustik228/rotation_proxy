@@ -3,7 +3,7 @@ import app.repo as R
 
 
 async def test_proxy_busy_get():
-    assert not await R.ProxyBuzy.is_busy(1), "Не должно быть такого ключа"
+    assert not await R.ProxyBuzy.is_busy(1)
 
 
 async def test_proxy_busy_set_get():
