@@ -24,13 +24,14 @@ async def get_available(
 
     proxies_models = await R.Proxy.get_available(expire, location_id, type_id)
     FacadeRotation.shuffle_proxies(proxies_models)
-    proxies = FacadeRotation.prepare_proxies(
+    proxies = await FacadeRotation.prepare_proxies(
         proxies_models,
         parsing_service,
         count
     )
-
-    return proxies
+    if proxies:
+        return proxies
+    raise HTTPException(status.HTTP_404_NOT_FOUND, "No available proxies")
 
 
 @router.get("/set_value/{value}")
