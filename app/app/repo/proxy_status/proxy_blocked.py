@@ -9,13 +9,13 @@ class ProxyBlocked:
     async def add(cls, id: int, service: str, expire: int = 300):
         '''Добавить прокси в "Занятые"'''
         await REDIS.set(f"{cls.prefix}{service}_{id}", 1, ex=expire)
-        logger.info(f"proxy {id} is buzy")
+        logger.info(f"proxy {id} is blocked")
 
     @classmethod
     async def free(cls, id: int, service: str):
-        '''Освобождает прокси'''
+        '''Освобождает заблоченную прокси по определенному сервису'''
         await REDIS.delete(f"{cls.prefix}{service}_{id}")
-        logger.info(f"proxy {id} is free")
+        logger.info(f"proxy {id} is free from blocked list")
 
     @classmethod
     async def get_all(cls):
@@ -40,8 +40,3 @@ class ProxyBlocked:
         '''Возвращает список в каком сервисе заблокирован данный id, если нигде, то []'''
         result: list[bytes] = await REDIS.keys(f'{cls.prefix}*_{id}')
         return [i.decode("utf-8").split("_")[1] for i in result]
-
-    # @classmethod
-    # async def get(cls, id: int):
-    #     '''Получить "занятую прокси по id"'''
-    #     return await REDIS.get(f"{cls.prefix}*_{id}")

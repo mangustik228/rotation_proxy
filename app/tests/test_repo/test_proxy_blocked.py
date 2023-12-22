@@ -20,6 +20,7 @@ async def test_get_all(insert_blocked):
     result = await R.ProxyBlocked.get_all()
     print(result)
     assert isinstance(result[0], str)
+    assert len(result) == 8
 
 
 @pytest.mark.parametrize("service,expected", [
@@ -54,3 +55,15 @@ async def test_is_blocked(insert_blocked, service, id, expected):
 async def test_where_is_blocked_true(insert_blocked, id, expected):
     result = await R.ProxyBlocked.where_id_blocked(id)
     assert result == expected
+
+
+@pytest.mark.parametrize("id,service,expected", [
+    (1, "test-example", 7),
+    (1, "testik", 8),
+])
+async def test_delete(clear_redis, insert_blocked, id, service, expected):
+    await R.ProxyBlocked.free(id, service)
+    result = await REDIS.get(f"blocked_{service}_{id}")
+    assert result == None, service
+    result = await REDIS.keys()
+    assert len(result) == expected
