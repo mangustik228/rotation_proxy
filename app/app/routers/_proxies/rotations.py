@@ -2,45 +2,35 @@ from fastapi import APIRouter, HTTPException, status
 from app.db_redis import REDIS
 import app.repo as R
 import app.schemas as S
-from app.exceptions import NotValidExpire
-from app.utils.functions import get_valid_expire
-import random
-from app.services import FacadeRotation
+from app.exceptions import NotValidExpire, NotValidServiceName, NoAvailableProxies
+from app.services import FacadeRotationAvailable
 
 router = APIRouter(prefix="/proxies/rotations", tags=["ROTATIONS"])
 
 
-@router.get("")
+@router.get("", response_model=S.GetResponseAvailableProxy)
 async def get_available(
         parsing_service: str,
-        count: int | None = 5,
-        expire: str | None = None,
+        count: int = 5,
         location_id: int | None = 1,
-        type_id: int | None = 1):
+        type_id: int | None = 1,
+        lock_time: int | None = 300,
+        expire_proxy: str | None = None):
     try:
-        expire = get_valid_expire(expire)
+        facade = FacadeRotationAvailable(
+            service=parsing_service,
+            count=count,
+            expire_proxy=expire_proxy,
+            location_id=location_id,
+            type_id=type_id,
+            lock_time=lock_time)
+        await facade.get_available_from_sql()
+        facade.shuffle_proxies_from_sql()
+        await facade.prepare_proxies()
     except NotValidExpire as e:
         raise HTTPException(status.HTTP_409_CONFLICT, str(e))
-
-    proxies_models = await R.Proxy.get_available(expire, location_id, type_id)
-    FacadeRotation.shuffle_proxies(proxies_models)
-    proxies = await FacadeRotation.prepare_proxies(
-        proxies_models,
-        parsing_service,
-        count
-    )
-    if proxies:
-        return proxies
-    raise HTTPException(status.HTTP_404_NOT_FOUND, "No available proxies")
-
-
-@router.get("/set_value/{value}")
-async def set_value(value: str):
-    await REDIS.set("first_key", value, ex=10)
-    return {"status": "ok"}
-
-
-@router.get("/get_value/{value}")
-async def get_value():
-    value = await REDIS.get("first_key")
-    return {"value": value}
+    except NotValidServiceName as e:
+        raise HTTPException(status.HTTP_409_CONFLICT, str(e))
+    except NoAvailableProxies as e:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, str(e))
+    return facade.result

@@ -1,3 +1,4 @@
+from typing import Literal
 from pydantic import BaseModel, Field, ConfigDict
 import uuid
 
@@ -14,6 +15,7 @@ class AvailableProxy(BaseModel):
         return f'{parsing_service}_{self.id}'
 
 
-class ResponseAvailableProxy(AvailableProxy):
-    uuid: str = Field(default_factory=uuid.uuid4)
-    parsing_service: str
+class GetResponseAvailableProxy(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    status: Literal["full", "not full"]
+    data: list[AvailableProxy]

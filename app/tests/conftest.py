@@ -85,14 +85,3 @@ def event_loop(request):
 async def clear_db():
     yield
     await update_db()
-
-
-# class _NameSpace:
-#     file_path = 'tests/src/test_ids'
-#     debug = True
-
-
-# @pytest.fixture(autouse=True)
-# def mock_get_namespace(mocker):
-#     mocker.patch('app.config.arg_parser.get_namespace',
-#                  return_value=_NameSpace())

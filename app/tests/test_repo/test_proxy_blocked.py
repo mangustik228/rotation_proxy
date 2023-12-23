@@ -18,7 +18,6 @@ async def test_add():
 
 async def test_get_all(insert_blocked):
     result = await R.ProxyBlocked.get_all()
-    print(result)
     assert isinstance(result[0], str)
     assert len(result) == 8
 

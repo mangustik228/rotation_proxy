@@ -1,2 +1,2 @@
 from .proxy_formater import ProxyFormater
-from .rotation import FacadeRotation
+from .rotation import FacadeRotationAvailable

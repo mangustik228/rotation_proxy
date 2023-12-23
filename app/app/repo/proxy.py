@@ -1,13 +1,12 @@
 from datetime import datetime
 from loguru import logger
 from sqlalchemy import select, func, update
-from asyncpg.exceptions import UniqueViolationError
-from sqlalchemy.exc import IntegrityError
+from sqlalchemy.orm import selectinload
 from .base_repo import BaseRepo, check_alchemy_problem
 import app.models as M
 import app.schemas as S
 from app.db_postgres import async_session
-from sqlalchemy.orm import selectinload
+from app.db_redis import redis_cache
 
 
 class Proxy(BaseRepo):
@@ -65,6 +64,7 @@ class Proxy(BaseRepo):
             return data
 
     @classmethod
+    @redis_cache
     async def get_available(cls, expire: datetime, location_id: int, type_id: int):
         async with async_session() as session:
             stmt = select(
