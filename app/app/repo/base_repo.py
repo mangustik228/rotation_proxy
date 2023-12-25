@@ -1,9 +1,8 @@
 import asyncio
 from loguru import logger
 from sqlalchemy import select, insert, delete, update
-from sqlalchemy.exc import SQLAlchemyError, IntegrityError
+from sqlalchemy.exc import IntegrityError
 from app.db_postgres import async_session
-import app.models as M
 from app.exceptions import DuplicateKey
 
 

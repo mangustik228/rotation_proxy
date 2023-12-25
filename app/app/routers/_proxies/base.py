@@ -1,12 +1,9 @@
-from datetime import datetime
 from fastapi import HTTPException
 from fastapi import APIRouter, status, Body
 from loguru import logger
 import app.schemas as S
 import app.repo as R
-from app.services import ProxyFormater
 from app.exceptions import DuplicateKey
-from .rotations import router as rotation_router
 
 router = APIRouter(prefix="/proxies", tags=["PROXIES"])
 

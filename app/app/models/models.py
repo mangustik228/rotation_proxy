@@ -32,6 +32,9 @@ class Error(Base):
     id: Mapped[int] = mapped_column(autoincrement=True, primary_key=True)
     proxy_id: Mapped[int] = mapped_column(ForeignKey("proxy.id"))
     proxy: Mapped["Proxy"] = relationship(back_populates="errors")
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime, default=datetime.utcnow
+    )
 
 
 class Proxy(Base):
@@ -44,7 +47,7 @@ class Proxy(Base):
     expire: Mapped[datetime] = mapped_column(DateTime)
 
     created_at: Mapped[datetime] = mapped_column(
-        DateTime, default=datetime.now)
+        DateTime, default=datetime.utcnow)
 
     location_id: Mapped[int] = mapped_column(
         ForeignKey("location.id"), default=1)

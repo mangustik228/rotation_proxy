@@ -24,8 +24,9 @@ class ProxyBuzy:
         return [i.decode("utf-8") for i in result]
 
     @classmethod
-    async def is_busy(cls, id: int):
-        '''Проверить являеться прокси занятой'''
+    async def is_not_free(cls, id: int):
+        '''Проверить являеться прокси занятой. 
+        Если занята - возвращает True'''
         result = await REDIS.get(f"{cls.prefix}{id}")
         return result is not None
 

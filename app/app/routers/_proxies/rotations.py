@@ -1,9 +1,8 @@
-from fastapi import APIRouter, HTTPException, status
-from app.db_redis import REDIS
-import app.repo as R
+from fastapi import APIRouter, HTTPException, status, Body
 import app.schemas as S
+import app.repo as R
 from app.exceptions import NotValidExpire, NotValidServiceName, NoAvailableProxies
-from app.services import FacadeRotationAvailable
+from app.services import FacadeRotationAvailable, FacadeRotationPatch
 
 router = APIRouter(prefix="/proxies/rotations", tags=["ROTATIONS"])
 
@@ -25,7 +24,6 @@ async def get_available(
             type_id=type_id,
             lock_time=lock_time)
         await facade.get_available_from_sql()
-        facade.shuffle_proxies_from_sql()
         await facade.prepare_proxies()
     except NotValidExpire as e:
         raise HTTPException(status.HTTP_409_CONFLICT, str(e))
@@ -34,3 +32,14 @@ async def get_available(
     except NoAvailableProxies as e:
         raise HTTPException(status.HTTP_404_NOT_FOUND, str(e))
     return facade.result
+
+
+@router.patch("", response_model=S.PatchResponseAvailableProxy)
+async def change_proxy(data: S.PatchRequestAvailableProxy = Body()):
+    try:
+        facade = FacadeRotationPatch(**data.model_dump())
+        await facade.get_available_from_sql()
+        last_blocks = await R.Error.get_last_5(data.id)
+        return await facade.prepare_proxy()
+    except:
+        ...

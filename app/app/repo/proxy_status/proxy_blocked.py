@@ -30,8 +30,9 @@ class ProxyBlocked:
         return [i.decode("utf-8") for i in result]
 
     @classmethod
-    async def is_blocked_by_service(cls, id: int, service: str):
-        '''Проверить являеться прокси заблокированной в каком то сервисе'''
+    async def is_not_free(cls, id: int, service: str):
+        '''Проверить являеться прокси заблокированной в каком то сервисе
+        Если заблокирован - возвращает True'''
         result = await REDIS.get(f"{cls.prefix}{service}_{id}")
         return result is not None
 

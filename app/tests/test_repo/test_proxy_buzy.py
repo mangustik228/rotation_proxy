@@ -3,26 +3,26 @@ import app.repo as R
 
 
 async def test_proxy_busy_get():
-    assert not await R.ProxyBuzy.is_busy(1)
+    assert not await R.ProxyBuzy.is_not_free(1)
 
 
 async def test_proxy_busy_set_get():
     await R.ProxyBuzy.add(3)
-    assert await R.ProxyBuzy.is_busy(3)
+    assert await R.ProxyBuzy.is_not_free(3)
 
 
-async def test_proxy_set_expire():
-    assert not await R.ProxyBuzy.is_busy(3)
+async def test_proxy_set_expire(clear_redis):
+    assert not await R.ProxyBuzy.is_not_free(3)
     await R.ProxyBuzy.add(3, 1)
-    assert await R.ProxyBuzy.is_busy(3)
+    assert await R.ProxyBuzy.is_not_free(3)
     await asyncio.sleep(1.2)
-    assert not await R.ProxyBuzy.is_busy(3)
+    assert not await R.ProxyBuzy.is_not_free(3)
 
 
 async def test_proxy_free():
     await R.ProxyBuzy.add(3)
     await R.ProxyBuzy.free(3)
-    assert not await R.ProxyBuzy.is_busy(3)
+    assert not await R.ProxyBuzy.is_not_free(3)
 
 
 async def test_get_all():
