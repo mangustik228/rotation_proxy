@@ -16,3 +16,11 @@ class Error(BaseRepo):
                 .limit(5)
             result = await session.execute(stmt)
             return result.mappings().all()
+
+    @classmethod
+    async def get_by_proxy_id(cls, proxy_id: int):
+        async with async_session() as session:
+            stmt = select(cls.model)\
+                .where(cls.model.proxy_id == proxy_id)
+            result = await session.execute(stmt)
+            return result.scalars().all()
