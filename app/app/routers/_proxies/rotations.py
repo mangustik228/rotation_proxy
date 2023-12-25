@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException, status, Body
 import app.schemas as S
 import app.repo as R
-from app.exceptions import NotValidExpire, NotValidServiceName, NoAvailableProxies
+from app.exceptions import NotValidExpire, NotValidServiceName, NotAvailableProxies
 from app.services import FacadeRotationAvailable, FacadeRotationPatch
 
 router = APIRouter(prefix="/proxies/rotations", tags=["ROTATIONS"])
@@ -29,7 +29,7 @@ async def get_available(
         raise HTTPException(status.HTTP_409_CONFLICT, str(e))
     except NotValidServiceName as e:
         raise HTTPException(status.HTTP_409_CONFLICT, str(e))
-    except NoAvailableProxies as e:
+    except NotAvailableProxies as e:
         raise HTTPException(status.HTTP_404_NOT_FOUND, str(e))
     return facade.result
 

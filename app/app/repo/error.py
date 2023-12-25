@@ -12,5 +12,7 @@ class Error(BaseRepo):
         async with async_session() as session:
             stmt = select(cls.model)\
                 .where(cls.model.id == id)\
-                .order_by(cls.model.created_at)
-            ...  # TODO
+                .order_by(cls.model.created_at)\
+                .limit(5)
+            result = await session.execute(stmt)
+            return result.mappings().all()

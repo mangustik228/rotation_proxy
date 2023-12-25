@@ -1,7 +1,7 @@
 import sqlalchemy as sa
 import app.repo as R
 import random
-from app.exceptions import NoAvailableProxies, NotValidServiceName, NotValidServiceName, NotValidExpire
+from app.exceptions import NotAvailableProxies, NotValidServiceName, NotValidServiceName, NotValidExpire
 from datetime import datetime, timedelta
 from pydantic import ValidationError
 import app.schemas as S
@@ -25,7 +25,7 @@ class FacadeRotationBase:
         self.proxies_models: list[sa.RowMapping] = await R.Proxy.get_available(
             self.expire_proxy, self.location_id, self.type_id)
         if len(self.proxies_models) == 0:
-            raise NoAvailableProxies("Нет актуальных прокси")
+            raise NotAvailableProxies("Нет актуальных прокси")
         random.shuffle(self.proxies_models)
 
     @property

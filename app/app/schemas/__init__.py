@@ -4,3 +4,4 @@ from ._proxy_types import *
 from ._locations import *
 from ._common import *
 from ._proxies_rotation import *
+from ._errors import *

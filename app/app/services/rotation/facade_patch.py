@@ -1,6 +1,7 @@
 from .facade_base import FacadeRotationBase
 import app.schemas as S
 import app.repo as R
+from app.exceptions import NotAvailableProxies
 
 
 class FacadeRotationPatch(FacadeRotationBase):
@@ -9,3 +10,4 @@ class FacadeRotationPatch(FacadeRotationBase):
             proxy = S.AvailableProxy(**model_proxy)
             if self.is_free_in_redis(proxy):
                 return proxy
+        raise NotAvailableProxies("not availalbe proxy")

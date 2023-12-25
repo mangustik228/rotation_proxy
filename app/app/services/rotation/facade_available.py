@@ -1,6 +1,6 @@
 import app.schemas as S
 import app.repo as R
-from app.exceptions import NoAvailableProxies
+from app.exceptions import NotAvailableProxies
 from pydantic import ValidationError
 from .facade_base import FacadeRotationBase
 
@@ -36,7 +36,7 @@ class FacadeRotationAvailable(FacadeRotationBase):
         if not self._result.get("status"):
             self._result["status"] = "not full"
         if len(data) == 0:
-            raise NoAvailableProxies("Proxies exist, but none are available")
+            raise NotAvailableProxies("Proxies exist, but none are available")
 
     @property
     def result(self):
