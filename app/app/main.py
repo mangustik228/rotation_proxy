@@ -13,6 +13,7 @@ app.include_router(routers.proxy_service)
 app.include_router(routers.location)
 app.include_router(routers.proxy_type)
 app.include_router(routers.error)
+app.include_router(routers.parsed_services)
 
 api_key_header = APIKeyHeader(name="X-API-Key")
 

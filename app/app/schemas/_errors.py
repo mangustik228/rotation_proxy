@@ -9,11 +9,13 @@ class BaseError(BaseModel):
     created_at: datetime
     proxy_id: int
     reason: str
+    parsed_service: str
 
 
 class PostRequestError(BaseModel):
     reason: str
     proxy_id: int = Field(gt=0)
+    parsed_service_id: int
 
 
 class PostResponseError(BaseModel):
@@ -26,37 +28,3 @@ class GetResponseErrorList(BaseModel):
     count: int
     proxy: ProxyLight
     errors: list[BaseError]
-
-
-# class ProxyType(BaseModel):
-#     model_config = ConfigDict(from_attributes=True)
-#     id: int
-#     name: str
-
-
-# class GetRequestProxyTypeList(BaseModel):
-#     types: list[ProxyType]
-
-
-# class GetRequestProxyType(ProxyType):
-#     ...
-
-
-# class PostRequestProxyType(BaseModel):
-#     name: str
-
-
-# class PostResponseProxyType(BaseModel):
-#     model_config = ConfigDict(from_attributes=True)
-#     status: Literal["created"]
-#     proxy_type: ProxyType = Field(alias="type")
-
-
-# class PutRequestProxyType(BaseModel):
-#     name: str
-
-
-# class PutResponseProxyType(BaseModel):
-#     model_config = ConfigDict(from_attributes=True)
-#     status: Literal["updated"]
-#     proxy_type: ProxyType = Field(alias="type")

@@ -74,7 +74,7 @@ class PutResponseProxy(BaseModel):
     proxy: ProxyLight
 
 
-class PutchRequestProxy(BaseModel):
+class PatchRequestProxy(BaseModel):
     server: str | None = None
     username: str | None = None
     password: str | None = None
@@ -85,6 +85,6 @@ class PutchRequestProxy(BaseModel):
     location_id: int | None = None
 
 
-class PutchResponseProxy(BaseModel):
+class PatchResponseProxy(BaseModel):
     status: Literal["updated"]
     proxy: ProxyLight

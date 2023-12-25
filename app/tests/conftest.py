@@ -10,15 +10,26 @@ from datetime import datetime
 import pytest
 import asyncio
 from httpx import AsyncClient
-from sqlalchemy import insert
+from sqlalchemy import delete, insert, text
+from alembic import command
+from alembic.config import Config
+
 
 import app.models as M
 from app.db_postgres import engine, async_session
 from app.main import app as fastapi_app
-
-from alembic import command
-from alembic.config import Config
 from app.config import settings
+from tests.utils import ProxyBuilder
+
+
+@pytest.fixture
+async def insert_parsed_service():
+    async with async_session() as session:
+        service = M.ParsedService(name="example-service")
+        session.add(service)
+        await session.commit()
+        yield
+    await update_db()
 
 
 @pytest.fixture()
@@ -32,7 +43,25 @@ async def client() -> AsyncClient:
 
 
 @pytest.fixture
+async def insert_proxies_and_errors():
+    ...
+
+
+@pytest.fixture
+async def insert_parsed_services():
+    async with async_session() as session:
+        parsed_service_1 = M.ParsedService(name="example-service")
+        parsed_service_2 = M.ParsedService(name="example-service-2")
+        session.add(parsed_service_1)
+        session.add(parsed_service_2)
+        await session.commit()
+    yield
+    await update_db()
+
+
+@pytest.fixture
 async def insert_proxies_10_proxies():
+    await update_db()
     with open(f'tests/src/proxies.json', "r") as file:
         data = json.load(file)
     for datum in data:

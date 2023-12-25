@@ -88,8 +88,8 @@ async def delete_proxy(id: int):
             logger.error(str(e))
 
 
-@router.patch("/{id}", response_model=S.PutchResponseProxy)
-async def patch_proxy(id: int, data: S.PutchRequestProxy = Body()):
+@router.patch("/{id}", response_model=S.PatchResponseProxy)
+async def patch_proxy(id: int, data: S.PatchRequestProxy = Body()):
     try:
         result = await R.Proxy.update_fields(id, **data.model_dump(exclude_unset=True))
     except DuplicateKey as e:

@@ -5,7 +5,7 @@ import app.schemas as S
 router = APIRouter(prefix="/errors", tags=["ERRORS"])
 
 
-@router.post("", response_model=S.PostResponseError)
+@router.post("", response_model=S.PostResponseError, status_code=status.HTTP_201_CREATED)
 async def post_error(data: S.PostRequestError):
     result = await R.Error.add_one(**data.model_dump())
     if result is not None:
@@ -30,4 +30,3 @@ async def get_errors_by_id(id: int) -> S.GetResponseErrorList:
         "proxy": proxy,
         "errors": errors
     }
-    ...  # TODO Сделать занесение ошибок.

@@ -6,7 +6,6 @@ from app.db_redis import REDIS
 
 async def test_get_empty(clear_redis):
     result = await R.ProxyBlocked.get_all()
-    print(result)
     assert len(result) == 0
 
 

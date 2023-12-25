@@ -35,7 +35,6 @@ async def change_location(id: int, data: S.PutRequestLocation):
         result = await R.Location.update(id, **data.model_dump())
         if result:
             return {"status": "updated", "location": result}
-        else:
-            raise HTTPException(status.HTTP_404_NOT_FOUND)
+        raise HTTPException(status.HTTP_404_NOT_FOUND)
     except DuplicateKey as e:
         raise HTTPException(status.HTTP_409_CONFLICT, str(e))
