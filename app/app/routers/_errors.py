@@ -17,16 +17,33 @@ async def post_error(data: S.PostRequestError):
 
 
 @router.get("/proxy/{id}")
-async def get_errors_by_id(id: int) -> S.GetResponseErrorList:
+async def get_errors_by_proxy(id: int) -> S.GetResponseErrorByProxy:
     proxy = await R.Proxy.get_by_id(id)
     if proxy is None:
-        raise HTTPException(status.HTTP_404_NOT_FOUND, "Not current proxy")
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "Proxy not found")
     errors = await R.Error.get_by_proxy_id(id)
     if len(errors) == 0:
         raise HTTPException(status.HTTP_404_NOT_FOUND, detail="not errors")
     return {
-        "status": "ok",
+        "status": "success",
         "count": len(errors),
         "proxy": proxy,
+        "errors": errors
+    }
+
+
+@router.get("/parsed_service/{id}",
+            response_model=S.GetResponseErrorByParsedService)
+async def get_errors_by_parsed_service(id: int):
+    service = await R.ParsedService.get_by_id(id)
+    if service is None:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "Service not found")
+    errors = await R.Error.get_by_service_id(id)
+    if len(errors) == 0:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, detail="not errors")
+    return {
+        "status": "success",
+        "count": len(errors),
+        "parsed_service": service,
         "errors": errors
     }

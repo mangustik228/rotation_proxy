@@ -39,3 +39,8 @@ class PutResponseParsedService(BaseModel):
     model_config = ConfigDict(from_attributes=True)
     status: Literal["updated"]
     parsed_service: ParsedServiceBase
+
+
+class GetResponseParsedServiceByName(BaseModel):
+    status: Literal["exist"]
+    id: int

@@ -17,6 +17,7 @@ class Proxy(BaseModel):
 
 
 class ProxyLight(Proxy):
+    id: int
     service_id: int
     type_id: int
     location_id: int

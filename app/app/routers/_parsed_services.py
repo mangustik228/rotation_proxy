@@ -6,6 +6,16 @@ from app.exceptions import DuplicateKey
 router = APIRouter(prefix="/parsed_services", tags=["PARSED_SERVICES"])
 
 
+@router.get("/name", response_model=S.GetResponseParsedServiceByName)
+async def get_parsed_service_by_name(name: str):
+    result = await R.ParsedService.get_by_name(name)
+    if result:
+        return {
+            "status": "exist",
+            "id": result}
+    raise HTTPException(status.HTTP_404_NOT_FOUND)
+
+
 @router.get("", response_model=S.GetResponseParsedServiceList)
 async def get_parsed_services():
     result = await R.ParsedService.get_all()

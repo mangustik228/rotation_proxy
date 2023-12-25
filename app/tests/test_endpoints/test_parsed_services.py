@@ -35,3 +35,12 @@ async def test_post_service_error(clear_db, client: AsyncClient):
     for _ in range(2):
         response = await client.post("/parsed_services", json=data)
     assert response.status_code == 409
+
+
+async def test_get_by_name(insert_parsed_service, client: AsyncClient):
+    params = {"name": "example-service"}
+    response = await client.get("/parsed_services/name", params=params)
+    assert response.status_code == 200
+    data = response.json()
+    assert data["status"] == "exist"
+    assert data["id"] == 1

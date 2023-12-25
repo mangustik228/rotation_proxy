@@ -32,6 +32,19 @@ async def insert_parsed_service():
     await update_db()
 
 
+@pytest.fixture
+async def insert_3_errors():
+    async with async_session() as session:
+        service = M.ParsedService(name="example-service")
+        for _ in range(3):
+            error = M.Error(reason="cloudflare", proxy_id=1)
+            error.parsed_service = service
+            session.add(error)
+        await session.commit()
+    yield
+    await update_db()
+
+
 @pytest.fixture()
 async def client() -> AsyncClient:
     async with AsyncClient(

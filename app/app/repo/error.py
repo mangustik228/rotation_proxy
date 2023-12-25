@@ -24,3 +24,11 @@ class Error(BaseRepo):
                 .where(cls.model.proxy_id == proxy_id)
             result = await session.execute(stmt)
             return result.scalars().all()
+
+    @classmethod
+    async def get_by_service_id(cls, parsed_service_id: int):
+        async with async_session() as session:
+            stmt = select(cls.model)\
+                .where(cls.model.parsed_service_id == parsed_service_id)
+            result = await session.execute(stmt)
+            return result.scalars().all()
