@@ -49,7 +49,7 @@ async def change_proxy(data: S.PatchRequestAvailableProxy = Body()):
         **data.dump_to_facade(), parsed_service=parsed_service)
     await facade.get_available_from_sql()
     # Смотрим прошлые баны
-    last_blocks = await R.Error.get_last_5(
+    last_blocks = await R.Error.get_last_hours(
         data.id,
         data.ignore_blocks_older_then_hours)
     # Высчитываем сколько должен быть блок

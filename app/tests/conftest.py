@@ -27,6 +27,8 @@ async def insert_parsed_service():
     async with async_session() as session:
         service = M.ParsedService(name="example-service")
         session.add(service)
+        second_service = M.ParsedService(name="another")
+        session.add(second_service)
         await session.commit()
         yield
     await update_db()
