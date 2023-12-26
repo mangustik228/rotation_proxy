@@ -11,12 +11,14 @@ class BaseError(BaseModel):
     proxy_id: int
     reason: str
     parsed_service_id: int
+    sleep_time: int
 
 
 class PostRequestError(BaseModel):
     reason: str
     proxy_id: int = Field(gt=0)
     parsed_service_id: int
+    sleep_time: int
 
 
 class PostResponseError(BaseModel):

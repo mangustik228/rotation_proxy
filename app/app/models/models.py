@@ -40,6 +40,7 @@ class Error(Base):
         ForeignKey("parsed_service.id", ondelete="CASCADE"))
     parsed_service: Mapped["ParsedService"] = relationship(
         back_populates="errors", cascade="all, delete")
+    sleep_time: Mapped[int]
 
 
 class ParsedService(Base):

@@ -6,6 +6,7 @@ class ErrorBuilder(BaseBuilder):
         self.data["proxy_id"] = 1
         self.data["reason"] = "ERROR"
         self.data["parsed_service_id"] = 1
+        self.data["sleep_time"] = 200
 
     def set_proxy_id(self, other):
         self.data["proxy_id"] = other

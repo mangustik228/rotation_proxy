@@ -1,4 +1,4 @@
-from typing import Literal
+from typing import Any, Literal
 from typing import Literal
 from pydantic import BaseModel, ConfigDict
 
@@ -23,13 +23,25 @@ class GetResponseAvailableProxy(BaseModel):
 
 class PatchRequestAvailableProxy(BaseModel):
     id: int
-    service: str
-    reason: str
-    logic: Literal["base", "geometry"] = "base"
+    parsed_service_id: int
+    ignore_blocks_older_then_hours: int = 24
+    parsed_service: str | None = None
     expire_proxy: str | None = None
     location_id: int = 1
     type_id: int = 1
     lock_time: int = 300
+    reason: str
+    params: dict[str, Any] | None = None
+    logic: Literal["base", "geometry"] = "base"
+
+    def dump_to_facade(self):
+        return {
+            "expire_proxy": self.expire_proxy,
+            "location_id": self.location_id,
+            "type_id": self.type_id,
+            "count": 1,
+            "lock_time": self.lock_time,
+        }
 
 
 class PatchResponseAvailableProxy(AvailableProxy):

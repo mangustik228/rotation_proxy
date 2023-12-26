@@ -37,7 +37,7 @@ async def insert_3_errors():
     async with async_session() as session:
         service = M.ParsedService(name="example-service")
         for _ in range(3):
-            error = M.Error(reason="cloudflare", proxy_id=1)
+            error = M.Error(reason="cloudflare", proxy_id=1, sleep_time=5)
             error.parsed_service = service
             session.add(error)
         await session.commit()

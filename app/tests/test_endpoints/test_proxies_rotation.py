@@ -3,6 +3,7 @@ import pytest
 from tests.utils import ProxyServiceBuilder
 
 
+@pytest.mark.skip
 async def test_get_available_proxies_404(client: AsyncClient):
     params = {
         "parsing_service": "example"

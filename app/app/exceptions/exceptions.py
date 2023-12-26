@@ -14,3 +14,7 @@ class NotValidServiceName(Exception):
 
 class NotAvailableProxies(Exception):
     ...
+
+
+class NotExistedParsedService(Exception):
+    ...

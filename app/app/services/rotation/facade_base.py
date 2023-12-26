@@ -8,13 +8,13 @@ import app.schemas as S
 
 
 class FacadeRotationBase:
-    def __init__(self, service: str,
+    def __init__(self, parsed_service: str,
                  count: int,
                  expire_proxy: str | None,
                  location_id: int,
                  type_id: int,
                  lock_time: int):
-        self.service = service  # look setter
+        self.parsed_service = parsed_service  # look setter
         self.expire_proxy = expire_proxy  # look setter
         self.location_id = location_id
         self.type_id = type_id
@@ -29,11 +29,11 @@ class FacadeRotationBase:
         random.shuffle(self.proxies_models)
 
     @property
-    def service(self):
+    def parsed_service(self):
         return self._service
 
-    @service.setter
-    def service(self, other):
+    @parsed_service.setter
+    def parsed_service(self, other):
         if "_" in other:
             raise NotValidServiceName("service name couldn't exist '_'")
         self._service = other
@@ -55,8 +55,8 @@ class FacadeRotationBase:
                 "expire must be format '2023-12-01T00:00:00` or None")
 
     async def is_free_in_redis(self, proxy: S.AvailableProxy):
-        if await R.ProxyBlocked.is_not_free(proxy.id, self.service):
+        if await R.ProxyBlocked.is_not_free(proxy.id, self.parsed_service):
             return False
-        if await R.ProxyBuzy.is_not_free(proxy.id, self.service):
+        if await R.ProxyBuzy.is_not_free(proxy.id):
             return False
         return True
