@@ -13,10 +13,11 @@ class Proxy(BaseModel):
     username: str
     password: str
     port: int
-    expire: date | datetime
+    expire: datetime
 
 
 class ProxyLight(Proxy):
+    id: int
     service_id: int
     type_id: int
     location_id: int
@@ -52,7 +53,7 @@ class PostRequestProxy(BaseModel):
     username: str
     password: str
     port: int
-    expire: date | datetime
+    expire: datetime
     location_id: int = Field(gt=0)
     type_id: int = Field(gt=0)
     service_id: int = Field(gt=0)
@@ -74,17 +75,17 @@ class PutResponseProxy(BaseModel):
     proxy: ProxyLight
 
 
-class PutchRequestProxy(BaseModel):
+class PatchRequestProxy(BaseModel):
     server: str | None = None
     username: str | None = None
     password: str | None = None
     port: int | None = None
-    expire: date | datetime | None = None
+    expire: datetime | None = None
     service_id: int | None = None
     type_id: int | None = None
     location_id: int | None = None
 
 
-class PutchResponseProxy(BaseModel):
+class PatchResponseProxy(BaseModel):
     status: Literal["updated"]
     proxy: ProxyLight

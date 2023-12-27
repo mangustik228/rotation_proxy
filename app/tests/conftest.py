@@ -10,15 +10,85 @@ from datetime import datetime
 import pytest
 import asyncio
 from httpx import AsyncClient
-from sqlalchemy import insert
+from sqlalchemy import delete, insert, text
+from alembic import command
+from alembic.config import Config
+
 
 import app.models as M
 from app.db_postgres import engine, async_session
 from app.main import app as fastapi_app
-
-from alembic import command
-from alembic.config import Config
 from app.config import settings
+from tests.utils import ProxyBuilder
+from app.db_redis import REDIS
+import app.repo as R
+
+
+@pytest.fixture()
+async def insert_5_proxy_to_change():
+    await update_db()
+    builder = ProxyBuilder()
+    for i in range(1, 6):
+        builder.set_server(f"100.100.100.{i}")
+        data = builder.build_to_repo()
+        await R.Proxy.add_one(**data)
+    await R.ParsedService.add_one(name="example-service")
+    await REDIS.flushdb()
+    yield
+    await update_db()
+    await REDIS.flushdb()
+
+
+@pytest.fixture()
+async def insert_blocked():
+    await REDIS.flushdb()
+    for i in range(1, 5):
+        await REDIS.set(f"blocked_test-service_{i}", 1)
+        await REDIS.set(f"blocked_test-service-2_{i}", 1)
+    yield
+    await REDIS.flushdb()
+
+
+@pytest.fixture()
+async def clear_redis():
+    await REDIS.flushdb()
+    yield
+    await REDIS.flushdb()
+
+
+@pytest.fixture
+async def insert_parsed_service():
+    async with async_session() as session:
+        service = M.ParsedService(name="example-service")
+        session.add(service)
+        await session.commit()
+    yield
+    await update_db()
+
+
+@pytest.fixture
+async def insert_parsed_services():
+    async with async_session() as session:
+        parsed_service_1 = M.ParsedService(name="example-service")
+        parsed_service_2 = M.ParsedService(name="example-service-2")
+        session.add(parsed_service_1)
+        session.add(parsed_service_2)
+        await session.commit()
+    yield
+    await update_db()
+
+
+@pytest.fixture
+async def insert_3_errors():
+    async with async_session() as session:
+        service = M.ParsedService(name="example-service")
+        for _ in range(3):
+            error = M.Error(reason="cloudflare", proxy_id=1, sleep_time=5)
+            error.parsed_service = service
+            session.add(error)
+        await session.commit()
+    yield
+    await update_db()
 
 
 @pytest.fixture()
@@ -32,7 +102,13 @@ async def client() -> AsyncClient:
 
 
 @pytest.fixture
+async def insert_proxies_and_errors():
+    ...
+
+
+@pytest.fixture
 async def insert_proxies_10_proxies():
+    await update_db()
     with open(f'tests/src/proxies.json', "r") as file:
         data = json.load(file)
     for datum in data:
@@ -41,7 +117,9 @@ async def insert_proxies_10_proxies():
         stmt = insert(M.Proxy).values(data)
         await session.execute(stmt)
         await session.commit()
+    await REDIS.flushdb()
     yield
+    await REDIS.flushdb()
     await update_db()
 
 
@@ -83,16 +161,6 @@ def event_loop(request):
 
 @pytest.fixture()
 async def clear_db():
+    await update_db()
     yield
     await update_db()
-
-
-# class _NameSpace:
-#     file_path = 'tests/src/test_ids'
-#     debug = True
-
-
-# @pytest.fixture(autouse=True)
-# def mock_get_namespace(mocker):
-#     mocker.patch('app.config.arg_parser.get_namespace',
-#                  return_value=_NameSpace())

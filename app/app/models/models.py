@@ -23,7 +23,8 @@ class Service(Base):
     __tablename__ = "service"
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     name: Mapped[str] = mapped_column(unique=True)
-    proxies: Mapped[List["Proxy"]] = relationship(back_populates="service")
+    proxies: Mapped[List["Proxy"]] = relationship(
+        back_populates="service", cascade="all, delete")
     description: Mapped[str] = mapped_column(nullable=True)
 
 
@@ -32,19 +33,35 @@ class Error(Base):
     id: Mapped[int] = mapped_column(autoincrement=True, primary_key=True)
     proxy_id: Mapped[int] = mapped_column(ForeignKey("proxy.id"))
     proxy: Mapped["Proxy"] = relationship(back_populates="errors")
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime, default=datetime.utcnow)
+    reason: Mapped[str]
+    parsed_service_id: Mapped[int] = mapped_column(
+        ForeignKey("parsed_service.id", ondelete="CASCADE"))
+    parsed_service: Mapped["ParsedService"] = relationship(
+        back_populates="errors", cascade="all, delete")
+    sleep_time: Mapped[int]
+
+
+class ParsedService(Base):
+    __tablename__ = "parsed_service"
+    id: Mapped[int] = mapped_column(autoincrement=True, primary_key=True)
+    name: Mapped[str] = mapped_column(unique=True)
+    errors: Mapped[List["Error"]] = relationship(
+        back_populates="parsed_service")
 
 
 class Proxy(Base):
     __tablename__ = "proxy"
     id: Mapped[int] = mapped_column(autoincrement=True, primary_key=True)
-    server: Mapped[str | None]
+    server: Mapped[str]
     username: Mapped[str]
     password: Mapped[str]
     port: Mapped[int]
     expire: Mapped[datetime] = mapped_column(DateTime)
 
     created_at: Mapped[datetime] = mapped_column(
-        DateTime, default=datetime.now)
+        DateTime, default=datetime.utcnow)
 
     location_id: Mapped[int] = mapped_column(
         ForeignKey("location.id"), default=1)

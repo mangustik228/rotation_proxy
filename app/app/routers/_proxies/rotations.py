@@ -1,21 +1,76 @@
-from fastapi import APIRouter
-from app.db_redis import REDIS
+from datetime import datetime
+from fastapi import APIRouter, Body, HTTPException
+import app.schemas as S
+import app.repo as R
+from app.services import FacadeRotationAvailable, FacadeRotationPatch, CalculateDelay
+from loguru import logger
 
 router = APIRouter(prefix="/proxies/rotations", tags=["ROTATIONS"])
 
 
-@router.get("")
-def foo():
-    return "success"
+@router.get("/free/{id}", response_model=S.GetResponseFreeProxy)
+async def free_proxy(id: int):
+    if await R.ProxyBusy.get(id):
+        await R.ProxyBusy.free(id)
+        return {"status": "success"}
+    raise HTTPException(404, detail=f"Busy proxies not founded")
 
 
-@router.get("/set_value/{value}")
-async def set_value(value: str):
-    await REDIS.set("first_key", value, ex=10)
-    return {"status": "ok"}
+@router.get("", response_model=S.GetResponseAvailableProxy)
+async def get_available(
+        parsed_service_id: int,
+        parsed_service: str | None = None,
+        count: int = 5,
+        location_id: int | None = 1,
+        type_id: int | None = 1,
+        lock_time: int | None = 300,
+        expire_proxy: str | None = None):
+    if parsed_service is None:
+        parsed_service = await R.ParsedService.get_name_by_id(parsed_service_id)
+    facade = FacadeRotationAvailable(
+        parsed_service=parsed_service,
+        count=count,
+        expire_proxy=expire_proxy,
+        location_id=location_id,
+        type_id=type_id,
+        lock_time=lock_time)
+    await facade.get_available_from_sql()
+    logger.info(f"available_proxies = {len(facade.proxies_models)}")
+    await facade.prepare_proxies()
+    return facade.result
 
 
-@router.get("/get_value/{value}")
-async def get_value():
-    value = await REDIS.get("first_key")
-    return {"value": value}
+# , response_model=S.PatchResponseAvailableProxy
+@router.patch("")
+async def change_proxy(data: S.PatchRequestAvailableProxy = Body()):
+    if data.parsed_service is None:
+        parsed_service = await R.ParsedService.get_name_by_id(data.parsed_service_id)
+    else:
+        parsed_service = data.parsed_service
+
+    # Инициализирую Фасад
+    facade = FacadeRotationPatch(
+        **data.dump_to_putch_facade(),
+        parsed_service=parsed_service
+    )
+    await facade.get_available_from_sql()
+
+    # Смотрим прошлые баны
+    last_blocks = await R.Error.get_last_hours(
+        data.id,
+        data.parsed_service_id,
+        data.ignore_hours)
+
+    # Логика блокировка прокси
+    params = data.params if data.params else {}
+    calculator = CalculateDelay(data.logic, last_blocks, params)
+    delay = calculator.calculate_time()
+
+    # Пишем ошибки в базы и освобождаем
+    await R.ProxyBlocked.add(data.id, parsed_service, delay)
+    await R.ProxyBusy.free(data.id)
+    await R.Error.add_one(**data.dump_to_sql_error(), sleep_time=delay)
+
+    # Получаем новый прокси
+    result = await facade.prepare_proxy()
+    return result

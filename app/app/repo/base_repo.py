@@ -1,10 +1,9 @@
 import asyncio
 from loguru import logger
-from sqlalchemy import select, insert, delete, update
-from sqlalchemy.exc import SQLAlchemyError, IntegrityError
+from sqlalchemy import select, insert, delete, update, func
+from sqlalchemy.exc import IntegrityError, DataError
 from app.db_postgres import async_session
-import app.models as M
-from app.exceptions import DuplicateKey
+from app.exceptions import DuplicateKey, DateNotValidFormat
 
 
 def check_alchemy_problem(func: asyncio.coroutine):
@@ -15,6 +14,10 @@ def check_alchemy_problem(func: asyncio.coroutine):
             if "duplicate key" in e._sql_message():
                 logger.info("Value is already exist")
                 raise DuplicateKey("Value is already exist")
+        except DataError as e:
+            logger.error(f"Problem with insert date {kwargs}")
+            print("jopa")
+            raise DateNotValidFormat("Date not valid format")
         except Exception as e:
             logger.error(str(e))
 
@@ -81,3 +84,10 @@ class BaseRepo:
                 result = result.scalar()
                 await session.commit()
                 return result
+
+    @classmethod
+    async def count_items(cls):
+        async with async_session() as session:
+            stmt = select(func.count()).select_from(cls.model)
+            result = await session.execute(stmt)
+            return result.scalar_one()

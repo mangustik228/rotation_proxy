@@ -25,20 +25,15 @@ async def get_service(id: int):
 @router.post("",
              status_code=status.HTTP_201_CREATED)
 async def post_service(data: S.PostRequestProxyService = Body()):
-    try:
-        result = await R.ProxyService.add_one(**data.model_dump())
-    except DuplicateKey as e:
-        raise HTTPException(status.HTTP_409_CONFLICT, str(e))
-    except Exception as e:
-        raise HTTPException(status.HTTP_400_BAD_REQUEST, str(e))
+    result = await R.ProxyService.add_one(**data.model_dump())
     return {"status": "created",
             "service": result}
 
 
-@router.put("/{id}", status_code=status.HTTP_201_CREATED)
+@router.put("/{id}",
+            status_code=status.HTTP_201_CREATED)
 async def change_service_name(id: int, data: S.PutRequestProxyService = Body()):
     result = await R.ProxyService.update(id, **data.model_dump())
     if result:
         return {"status": "updated", "service": result}
-    else:
-        raise HTTPException(status.HTTP_404_NOT_FOUND)
+    raise HTTPException(status.HTTP_404_NOT_FOUND)
