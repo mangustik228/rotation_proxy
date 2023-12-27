@@ -24,16 +24,16 @@ class ProxyBlocked:
         return [i.decode("utf-8") for i in result]
 
     @classmethod
-    async def get_all_by_service(cls, service: str):
+    async def get_all_by_service(cls, parsed_service: str):
         '''Получить все заблокированные прокси для определенного сервиса'''
-        result: list[bytes] = await REDIS.keys(f"{cls.prefix}{service}_*")
+        result: list[bytes] = await REDIS.keys(f"{cls.prefix}{parsed_service}_*")
         return [i.decode("utf-8") for i in result]
 
     @classmethod
-    async def is_not_free(cls, id: int, service: str):
+    async def is_not_free(cls, id: int, parsed_service: str):
         '''Проверить являеться прокси заблокированной в каком то сервисе
         Если заблокирован - возвращает True'''
-        result = await REDIS.get(f"{cls.prefix}{service}_{id}")
+        result = await REDIS.get(f"{cls.prefix}{parsed_service}_{id}")
         return result is not None
 
     @classmethod

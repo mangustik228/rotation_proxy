@@ -7,6 +7,7 @@ from .facade_base import FacadeRotationBase
 
 class FacadeRotationAvailable(FacadeRotationBase):
     async def prepare_proxies(self):
+        '''Проверяет если вообще актуальные прокси'''
         data = []
         self._result = {}
         self._result["data"] = data

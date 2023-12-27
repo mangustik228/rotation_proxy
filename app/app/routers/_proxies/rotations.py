@@ -56,6 +56,6 @@ async def change_proxy(data: S.PatchRequestAvailableProxy = Body()):
     params = data.params if data.params else {}
     calculator = CalculateDelay(data.logic, last_blocks, params)
     delay = calculator.calculate_time()
-
+    await R.ProxyBlocked.add
     result = await facade.prepare_proxy()
     return result
