@@ -2,7 +2,7 @@ from typing import Any
 from .base_builder import BaseBuilder
 
 
-class ChangeProxyBuilder(BaseBuilder):
+class ProxyBuilderPatch(BaseBuilder):
     def set_default_value(self):
         self.data["proxy_id"] = 1
         self.data["parsed_service_id"] = 1

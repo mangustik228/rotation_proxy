@@ -2,6 +2,7 @@ from datetime import datetime
 from httpx import AsyncClient
 import pytest
 from app.db_postgres import async_session
+from app.db_redis import REDIS
 import app.repo as R
 from tests.utils import ProxyBuilder
 
@@ -87,3 +88,16 @@ async def test_availables_proxies_expire(
     assert response.json()["status"] == "not full"
     assert len(response.json()["data"]) == 1
     assert response.json()["data"][0]["server"] == "100.100.100.100"
+
+
+async def test_redis_writer(
+        insert_proxies_10_proxies,
+        insert_parsed_services,
+        client: AsyncClient,
+        clear_redis):
+    params = {"parsed_service_id": 1, "count": 3}
+    response = await client.get("/proxies/rotations", params=params)
+    assert response.status_code == 200
+    keys: list[bytes] = await REDIS.keys("*")
+    keys = [k.decode() for k in keys if "busy_" in k.decode()]
+    assert len(keys) == 3

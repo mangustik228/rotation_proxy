@@ -17,7 +17,6 @@ class FacadeRotationAvailable(FacadeRotationBase):
                 continue
             data.append(proxy)
             await R.ProxyBuzy.add(proxy.id, self.lock_time)
-            R.ProxyBuzy
             if len(data) == self.count:
                 self._result["status"] = "full"
                 break

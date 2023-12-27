@@ -24,7 +24,7 @@ class FacadeRotationPatch(FacadeRotationBase):
         self.expire_proxy = expire_proxy  # look parent property
         self.location_id = location_id
         self.type_id = type_id
-        self.lock_time = lock_time
+        self.lock_time = lock_time  # For buzy
         self.reason = reason
         self.params = params
         self.logic = logic
@@ -33,5 +33,6 @@ class FacadeRotationPatch(FacadeRotationBase):
         for model_proxy in self.proxies_models:
             proxy = S.AvailableProxy(**model_proxy)
             if await self.is_free_in_redis(proxy):
+                await R.ProxyBuzy.add(proxy.id, expire=self.lock_time)
                 return proxy
         raise NotAvailableProxies("not availalbe proxy")

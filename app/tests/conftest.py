@@ -25,7 +25,7 @@ import app.repo as R
 
 
 @pytest.fixture()
-async def set_5_proxy_to_change():
+async def insert_5_proxy_to_change():
     await update_db()
     builder = ProxyBuilder()
     for i in range(1, 6):
