@@ -8,7 +8,7 @@ async def test_integration(insert_5_proxy_to_change, client: AsyncClient):
     params = {"parsed_service_id": 1, "count": 2}
     response = await client.get("/proxies/rotations", params=params)
     proxies = response.json()["data"]
-    result = await R.ProxyBuzy.get_all()
+    result = await R.ProxyBusy.get_all()
     assert len(result) == 2
 
     builder = ProxyBuilderPatch()
@@ -21,8 +21,8 @@ async def test_integration(insert_5_proxy_to_change, client: AsyncClient):
         new_proxy = response.json()
         new_proxy_id = new_proxy["id"]
 
-    result = await R.ProxyBuzy.get_all()
-    assert len(result) == 4
+    result = await R.ProxyBusy.get_all()
+    assert len(result) == 2
 
     result = await R.ProxyBlocked.get_all()
     assert len(result) == 2
@@ -34,16 +34,16 @@ async def test_integration(insert_5_proxy_to_change, client: AsyncClient):
     assert len(result) == 3
     new_proxy_id = response.json()["id"]
 
-    result = await R.ProxyBuzy.get_all()
-    assert len(result) == 5
+    result = await R.ProxyBusy.get_all()
+    assert len(result) == 2
 
     builder.set_proxy_id(new_proxy_id)
     data = builder.build()
     response = await client.patch("/proxies/rotations", json=data)
     assert response.status_code == 404
 
-    busy = await R.ProxyBuzy.get_all()
-    assert len(busy) == 5
+    busy = await R.ProxyBusy.get_all()
+    assert len(busy) == 1
 
     blocks = await R.ProxyBlocked.get_all()
     assert len(blocks) == 4

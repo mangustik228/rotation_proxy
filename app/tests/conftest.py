@@ -117,7 +117,9 @@ async def insert_proxies_10_proxies():
         stmt = insert(M.Proxy).values(data)
         await session.execute(stmt)
         await session.commit()
+    await REDIS.flushdb()
     yield
+    await REDIS.flushdb()
     await update_db()
 
 

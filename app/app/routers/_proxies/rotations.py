@@ -57,8 +57,9 @@ async def change_proxy(data: S.PatchRequestAvailableProxy = Body()):
     calculator = CalculateDelay(data.logic, last_blocks, params)
     delay = calculator.calculate_time()
 
-    # Пишем ошибки в базы
+    # Пишем ошибки в базы и освобождаем
     await R.ProxyBlocked.add(data.id, parsed_service, delay)
+    await R.ProxyBusy.free(data.id)
     await R.Error.add_one(**data.dump_to_sql_error(), sleep_time=delay)
 
     # Получаем новый прокси

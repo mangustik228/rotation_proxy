@@ -54,7 +54,8 @@ class FacadeRotationBase:
             raise NotValidExpire(
                 "expire must be format '2023-12-01T00:00:00` or None")
 
-    async def is_free_in_redis(self, proxy: S.AvailableProxy):
-        if await R.ProxyRedisBase.is_not_free(proxy.id):
-            return False
-        return True
+    async def is_free_in_redis(self, proxy: S.AvailableProxy, parsed_service: str = False):
+        free_in_block = bool(parsed_service) and \
+            await R.ProxyBlocked.is_free(proxy.id, parsed_service)
+        free_in_busy = await R.ProxyBusy.is_free(proxy.id)
+        return free_in_block and free_in_busy

@@ -2,7 +2,7 @@ from app.db_redis import REDIS
 from loguru import logger
 
 
-class ProxyBuzy:
+class ProxyBusy:
     prefix = "busy_"
 
     @classmethod
@@ -24,11 +24,11 @@ class ProxyBuzy:
         return [i.decode("utf-8") for i in result]
 
     @classmethod
-    async def is_not_free(cls, id: int):
+    async def is_free(cls, id: int):
         '''Проверить являеться прокси занятой. 
-        Если занята - возвращает True'''
+        Если свободен возвращает True'''
         result = await REDIS.get(f"{cls.prefix}{id}")
-        return result is not None
+        return result is None
 
     @classmethod
     async def get(cls, id: int):

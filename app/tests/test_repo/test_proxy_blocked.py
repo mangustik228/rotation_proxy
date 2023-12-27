@@ -36,12 +36,12 @@ async def test_free(insert_blocked):
 
 
 @pytest.mark.parametrize("service,id,expected", [
-    ("service", 1, False),
-    ("test-service", 1, True),
-    ("test-service", 11, False),
+    ("service", 1, True),
+    ("test-service", 1, False),
+    ("test-service", 11, True),
 ])
 async def test_is_blocked(clear_redis, insert_blocked, service, id, expected):
-    result = await R.ProxyBlocked.is_not_free(id, service)
+    result = await R.ProxyBlocked.is_free(id, service)
     assert result == expected
 
 

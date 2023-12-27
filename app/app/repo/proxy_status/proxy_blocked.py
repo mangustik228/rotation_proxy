@@ -30,11 +30,11 @@ class ProxyBlocked:
         return [i.decode("utf-8") for i in result]
 
     @classmethod
-    async def is_not_free(cls, proxy_id: int, parsed_service: str):
+    async def is_free(cls, proxy_id: int, parsed_service: str):
         '''Проверить являеться прокси заблокированной в каком то сервисе
-        Если заблокирован - возвращает True'''
+        Если свободен возвращает True'''
         result = await REDIS.get(f"{cls.prefix}{parsed_service}_{proxy_id}")
-        return result is not None
+        return result is None
 
     @classmethod
     async def where_id_blocked(cls, proxy_id: int):

@@ -13,10 +13,10 @@ class FacadeRotationAvailable(FacadeRotationBase):
         self._result["data"] = data
         for model_proxy in self.proxies_models:
             proxy = S.AvailableProxy(**model_proxy)
-            if not await self.is_free_in_redis(proxy):
+            if not await self.is_free_in_redis(proxy, self.parsed_service):
                 continue
             data.append(proxy)
-            await R.ProxyBuzy.add(proxy.id, self.lock_time)
+            await R.ProxyBusy.add(proxy.id, self.lock_time)
             if len(data) == self.count:
                 self._result["status"] = "full"
                 break
