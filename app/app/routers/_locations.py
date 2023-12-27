@@ -22,19 +22,13 @@ async def get_location(id: int):
 
 @router.post("", response_model=S.PostResponseLocation, status_code=status.HTTP_201_CREATED)
 async def post_location(data: S.PostRequestLocation):
-    try:
-        result = await R.Location.add_one(**data.model_dump())
-        return {"status": "created", "location": result}
-    except DuplicateKey:
-        raise HTTPException(status.HTTP_409_CONFLICT, "name is already exist")
+    result = await R.Location.add_one(**data.model_dump())
+    return {"status": "created", "location": result}
 
 
 @router.put("/{id}", response_model=S.PutResponseLocation, status_code=status.HTTP_201_CREATED)
 async def change_location(id: int, data: S.PutRequestLocation):
-    try:
-        result = await R.Location.update(id, **data.model_dump())
-        if result:
-            return {"status": "updated", "location": result}
-        raise HTTPException(status.HTTP_404_NOT_FOUND)
-    except DuplicateKey as e:
-        raise HTTPException(status.HTTP_409_CONFLICT, str(e))
+    result = await R.Location.update(id, **data.model_dump())
+    if result:
+        return {"status": "updated", "location": result}
+    raise HTTPException(status.HTTP_404_NOT_FOUND)

@@ -9,7 +9,7 @@ class FacadeRotationPatch(FacadeRotationBase):
                  id: int,
                  parsed_service: str,
                  parsed_service_id: int,
-                 ignore_blocks_older_then_hours: int,
+                 ignore_hours: int,
                  expire_proxy: int,
                  location_id: int,
                  type_id: int,
@@ -20,7 +20,7 @@ class FacadeRotationPatch(FacadeRotationBase):
         self.id = id
         self.parsed_service = parsed_service  # look parent property
         self.parsed_service_id = parsed_service_id
-        self.ignore_blocks_older_then_hours = ignore_blocks_older_then_hours
+        self.ignore_hours = ignore_hours
         self.expire_proxy = expire_proxy  # look parent property
         self.location_id = location_id
         self.type_id = type_id

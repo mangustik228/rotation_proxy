@@ -36,21 +36,15 @@ async def get_parsed_service_by_id(id: int):
 
 @router.post("", status_code=status.HTTP_201_CREATED)
 async def post_parsed_service(data: S.PostRequestParsedService = Body()):
-    try:
-        result = await R.ParsedService.add_one(**data.model_dump())
-        return {"status": "created", "parsed_service": result}
-    except DuplicateKey:
-        raise HTTPException(status.HTTP_409_CONFLICT, "name is already exist")
+    result = await R.ParsedService.add_one(**data.model_dump())
+    return {"status": "created", "parsed_service": result}
 
 
 @router.put("/{id}",
             response_model=S.PutResponseParsedService,
             status_code=status.HTTP_201_CREATED)
 async def update_proxy_name(id: int, data: S.PutRequestParsedService):
-    try:
-        result = await R.ParsedService.update(id, **data.model_dump())
-        if result:
-            return {"status": "updated", "parsed_service": result}
-        raise HTTPException(status.HTTP_404_NOT_FOUND)
-    except DuplicateKey as e:
-        raise HTTPException(status.HTTP_409_CONFLICT, str(e))
+    result = await R.ParsedService.update(id, **data.model_dump())
+    if result:
+        return {"status": "updated", "parsed_service": result}
+    raise HTTPException(status.HTTP_404_NOT_FOUND)

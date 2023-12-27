@@ -14,7 +14,7 @@ class ProxyBuilder(BaseBuilder):
         self.data["type_id"] = 1
 
     def set_type_id(self, id: int):
-        self.data["type_id"] = 2
+        self.data["type_id"] = id
 
     def set_expire(self, date: datetime):
         if isinstance(date, datetime):

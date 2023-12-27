@@ -21,6 +21,22 @@ from app.main import app as fastapi_app
 from app.config import settings
 from tests.utils import ProxyBuilder
 from app.db_redis import REDIS
+import app.repo as R
+
+
+@pytest.fixture()
+async def set_5_proxy_to_change():
+    await update_db()
+    builder = ProxyBuilder()
+    for i in range(1, 6):
+        builder.set_server(f"100.100.100.{i}")
+        data = builder.build_to_repo()
+        await R.Proxy.add_one(**data)
+    await R.ParsedService.add_one(name="example-service")
+    await REDIS.flushdb()
+    yield
+    await update_db()
+    await REDIS.flushdb()
 
 
 @pytest.fixture()

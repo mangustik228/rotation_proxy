@@ -1,5 +1,8 @@
 
 
+from fastapi import FastAPI
+
+
 class DuplicateKey(Exception):
     ...
 

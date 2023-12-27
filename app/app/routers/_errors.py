@@ -11,7 +11,8 @@ async def post_error(data: S.PostRequestError):
     if result is not None:
         return {
             "status": "created",
-            "error_id": result.id}
+            "error_id": result.id
+        }
     raise HTTPException(status.HTTP_404_NOT_FOUND,
                         detail="probably not found proxy_id")
 
