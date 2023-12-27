@@ -20,3 +20,6 @@ class BaseBuilder(ABC):
 
     def build_list(self):
         return [self.data]
+
+    def build_to_repo(self):
+        return self.build()

@@ -45,10 +45,20 @@ async def insert_parsed_service():
     async with async_session() as session:
         service = M.ParsedService(name="example-service")
         session.add(service)
-        second_service = M.ParsedService(name="another")
-        session.add(second_service)
         await session.commit()
-        yield
+    yield
+    await update_db()
+
+
+@pytest.fixture
+async def insert_parsed_services():
+    async with async_session() as session:
+        parsed_service_1 = M.ParsedService(name="example-service")
+        parsed_service_2 = M.ParsedService(name="example-service-2")
+        session.add(parsed_service_1)
+        session.add(parsed_service_2)
+        await session.commit()
+    yield
     await update_db()
 
 
@@ -78,18 +88,6 @@ async def client() -> AsyncClient:
 @pytest.fixture
 async def insert_proxies_and_errors():
     ...
-
-
-@pytest.fixture
-async def insert_parsed_services():
-    async with async_session() as session:
-        parsed_service_1 = M.ParsedService(name="example-service")
-        parsed_service_2 = M.ParsedService(name="example-service-2")
-        session.add(parsed_service_1)
-        session.add(parsed_service_2)
-        await session.commit()
-    yield
-    await update_db()
 
 
 @pytest.fixture
@@ -145,5 +143,6 @@ def event_loop(request):
 
 @pytest.fixture()
 async def clear_db():
+    await update_db()
     yield
     await update_db()

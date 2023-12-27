@@ -54,7 +54,7 @@ class ParsedService(Base):
 class Proxy(Base):
     __tablename__ = "proxy"
     id: Mapped[int] = mapped_column(autoincrement=True, primary_key=True)
-    server: Mapped[str | None]
+    server: Mapped[str]
     username: Mapped[str]
     password: Mapped[str]
     port: Mapped[int]

@@ -18,3 +18,7 @@ class NotAvailableProxies(Exception):
 
 class NotExistedParsedService(Exception):
     ...
+
+
+class DateNotValidFormat(Exception):
+    ...

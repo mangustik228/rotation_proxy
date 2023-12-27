@@ -50,8 +50,7 @@ async def post_bulk_proxies(data: list[S.PostRequestProxy] = Body()):
         try:
             await R.Proxy.add_one(**datum.model_dump())
             success += 1
-        except Exception as e:
-            print(str(e))
+        except DuplicateKey as e:
             errors += 1
     return {
         "status": "created",
@@ -70,7 +69,7 @@ async def update_proxy(id: int, data: S.PutRequestProxy):
                 "proxy": result
             }
         else:
-            raise HTTPException(status.HTTP_404_NOT_FOUND)
+            raise HTTPException(status.HTTP_404_NOT_FOUND, "proxy not founded")
     except DuplicateKey as e:
         raise HTTPException(status.HTTP_409_CONFLICT, str(e))
 
@@ -97,52 +96,3 @@ async def patch_proxy(id: int, data: S.PatchRequestProxy = Body()):
             status_code=status.HTTP_409_CONFLICT,
             detail=str(e))
     return {"status": "updated", "proxy": result}
-
-
-# @router.patch("/{id}", status_code=status.HTTP_204_NO_CONTENT)
-# async def update_proxy(id: int):
-#     ...
-
-
-# @router.get("")
-# async def get_proxies(service: str | None = None,
-#                       location_id: int | None = 1,
-#                       count: int = 25,
-#                       format: str = "short",
-#                       app_type: str = "playwright",
-#                       expire: datetime = datetime.utcnow(),
-#                       type_id: int | None = 1):
-#     '''
-#     Get current proxies:
-#     **format:** Literal["full", "queue", "short"]
-#       - full
-#         ```python
-#         [{
-#             "server": "...",
-#             "username": "...",
-#             "password"" "..."
-#         }]
-#         ```
-#     **app_type:** Literal["requests", "playwright"]
-
-#     '''
-#     result = await R.Proxy.get_all(count)
-#     try:
-#         return ProxyFormater.prepare_proxies(result, format, app_type)
-#     except ValueError as e:
-#         return HTTPException(422, str(e))
-
-
-# @router.get("/{id}")
-# async def get_proxy(id: int):
-#     ...
-
-
-# @router.delete("/{id}", status_code=status.HTTP_204_NO_CONTENT)
-# async def delete_proxy(id: int):
-#     ...
-
-
-# @router.post("/change")
-# async def change_proxy(data: S.ProxyBase = Body()):
-#     ...

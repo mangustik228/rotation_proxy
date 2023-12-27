@@ -6,7 +6,7 @@ from freezegun import freeze_time
 
 
 @freeze_time("2023-12-25T12:00:00")
-async def test_get_last_5(insert_proxies_10_proxies, insert_parsed_service):
+async def test_get_last_5(insert_proxies_10_proxies, insert_parsed_services):
     q = """
         INSERT INTO 
         error(reason, created_at, proxy_id, parsed_service_id, sleep_time) 

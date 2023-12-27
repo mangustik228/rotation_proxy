@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException, status, Body
 import app.schemas as S
 import app.repo as R
-from app.exceptions import NotValidExpire, NotValidServiceName, NotAvailableProxies
+from app.exceptions import NotValidExpire, NotValidServiceName, NotAvailableProxies, NotExistedParsedService
 from app.services import FacadeRotationAvailable, FacadeRotationPatch, CalculateDelay
 from loguru import logger
 
@@ -17,8 +17,11 @@ async def get_available(
         type_id: int | None = 1,
         lock_time: int | None = 300,
         expire_proxy: str | None = None):
-    if parsed_service is None:
-        parsed_service = await R.ParsedService.get_name_by_id(parsed_service_id)
+    try:
+        if parsed_service is None:
+            parsed_service = await R.ParsedService.get_name_by_id(parsed_service_id)
+    except NotExistedParsedService as e:
+        raise HTTPException(status.HTTP_409_CONFLICT, str(e))
     try:
         facade = FacadeRotationAvailable(
             parsed_service=parsed_service,
@@ -34,6 +37,8 @@ async def get_available(
     except NotValidServiceName as e:
         raise HTTPException(status.HTTP_409_CONFLICT, str(e))
     except NotAvailableProxies as e:
+        # count_locations = await R.Location.count_items()
+        # count_types = await R.ProxyType.count_items()
         raise HTTPException(status.HTTP_404_NOT_FOUND, str(e))
     return facade.result
 
