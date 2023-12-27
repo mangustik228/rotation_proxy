@@ -22,14 +22,6 @@ async def test_change_proxy_error_db(insert_5_proxy_to_change, client: AsyncClie
     assert result == 1
 
 
-@pytest.mark.skip
-async def test_change_proxy_error_redis(insert_5_proxy_to_change, client: AsyncClient):
-    builder = ProxyBuilderPatch()
-    builder.set_proxy_id(2)
-    data = builder.build()
-    await client.patch("/proxies/rotations", json=data)
-
-
 async def test_change_proxy_not_available(insert_5_proxy_to_change, client: AsyncClient):
     builder = ProxyBuilderPatch()
     builder.set_proxy_id(1)
@@ -43,25 +35,20 @@ async def test_change_proxy_not_available(insert_5_proxy_to_change, client: Asyn
     await R.ProxyBusy.get_all() == 4
 
 
-@pytest.mark.skip
 async def test_change_proxy_expired_from_another_service(insert_5_proxy_to_change, client: AsyncClient):
     builder = ProxyBuilderPatch()
     for i in range(1, 6):
         await R.ProxyBlocked.add(i, "example-service")
     await R.ParsedService.add_one(name="ozon")
-    data = builder.build()
 
+    data = builder.build()
     response = await client.patch("/proxies/rotations", json=data)
-    print(response.json())
     assert response.status_code == 404
 
     builder.set_parsed_service("ozon")
     data = builder.build()
 
     response = await client.patch("/proxies/rotations", json=data)
-    result = await R.ProxyBlocked.get_all()
-    print(result)
-    result = await R.ProxyBusy.get_all()
-    print(result)
-
     assert response.status_code == 200
+    blocks = await R.ProxyBlocked.get_all_by_service("ozon")
+    assert len(blocks) == 1
