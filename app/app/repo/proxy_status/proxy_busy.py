@@ -34,3 +34,25 @@ class ProxyBusy:
     async def get(cls, id: int):
         '''Получить "занятую прокси по id"'''
         return await REDIS.get(f"{cls.prefix}{id}")
+
+    @classmethod
+    async def get_all_with_expire(cls):
+        keys_with_ttl = {}
+        cursor = b'0'  # Инициализация курсора для SCAN
+        while cursor:
+            cursor, keys = await REDIS.scan(cursor)
+            for key in keys:
+                ttl = await REDIS.ttl(key)
+                keys_with_ttl[key.decode("utf-8")] = ttl
+
+        result = []
+        for key, value in keys_with_ttl.items():
+            logger.info(f"{key = } {value = }")
+            if "busy_" not in key:
+                continue
+            item = {}
+            item["id"] = key.split("_")[-1]
+            item["expire"] = value
+            logger.info(item)
+            result.append(item)
+        return result

@@ -15,6 +15,10 @@ class AvailableProxy(BaseModel):
         return f'{parsing_service}_{self.id}'
 
 
+class GetResponseFreeProxy(BaseModel):
+    status: Literal["success"]
+
+
 class GetResponseAvailableProxy(BaseModel):
     model_config = ConfigDict(from_attributes=True)
     status: Literal["full", "not full"]

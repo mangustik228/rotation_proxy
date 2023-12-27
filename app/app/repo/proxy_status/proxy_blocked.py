@@ -41,3 +41,25 @@ class ProxyBlocked:
         '''Возвращает список в каком сервисе заблокирован данный id, если нигде, то []'''
         result: list[bytes] = await REDIS.keys(f'{cls.prefix}*_{proxy_id}')
         return [i.decode("utf-8").split("_")[1] for i in result]
+
+    @classmethod
+    async def get_all_with_expire(cls):
+        keys_with_ttl = {}
+        cursor = b'0'  # Инициализация курсора для SCAN
+        while cursor:
+            cursor, keys = await REDIS.scan(cursor)
+            for key in keys:
+                ttl = await REDIS.ttl(key)
+                keys_with_ttl[key.decode("utf-8")] = ttl
+
+        result = []
+        for key, value in keys_with_ttl.items():
+            logger.info(f"{key = } {value = }")
+            if "blocked_" not in key:
+                continue
+            item = {}
+            _, item["service"], item["id"] = key.split("_")
+            item["expire"] = value
+            logger.info(item)
+            result.append(item)
+        return result

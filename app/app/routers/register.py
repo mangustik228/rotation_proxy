@@ -6,10 +6,14 @@ from ._errors import router as error
 from ._proxy_type import router as proxy_type
 from ._proxies.rotations import router as proxies_rotations
 from ._parsed_services import router as parsed_services
+from ._proxies.busies import router as proxy_busy
+from ._proxies.blocks import router as proxy_blocks
 
 
 def register_routers(app: FastAPI):
     app.include_router(proxies_rotations)
+    app.include_router(proxy_busy)
+    app.include_router(proxy_blocks)
     app.include_router(proxies)
     app.include_router(proxy_service)
     app.include_router(location)

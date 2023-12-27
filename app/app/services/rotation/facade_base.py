@@ -46,7 +46,7 @@ class FacadeRotationBase:
     def expire_proxy(self, other):
         if other is None:
             self._expire = datetime.now().replace(
-                second=0, microsecond=0) + timedelta(days=1)
+                second=0, microsecond=0)
             return
         try:
             self._expire = S.ValidateDate(date=other).date

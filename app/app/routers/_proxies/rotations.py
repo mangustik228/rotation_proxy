@@ -1,12 +1,19 @@
-from fastapi import APIRouter, HTTPException, status, Body
-from app.exceptions.exceptions import DuplicateKey
+from datetime import datetime
+from fastapi import APIRouter, Body, HTTPException
 import app.schemas as S
 import app.repo as R
-from app.exceptions import NotValidExpire, NotValidServiceName, NotAvailableProxies, NotExistedParsedService
 from app.services import FacadeRotationAvailable, FacadeRotationPatch, CalculateDelay
 from loguru import logger
 
 router = APIRouter(prefix="/proxies/rotations", tags=["ROTATIONS"])
+
+
+@router.get("/free/{id}", response_model=S.GetResponseFreeProxy)
+async def free_proxy(id: int):
+    if await R.ProxyBusy.get(id):
+        await R.ProxyBusy.free(id)
+        return {"status": "success"}
+    raise HTTPException(404, detail=f"Busy proxies not founded")
 
 
 @router.get("", response_model=S.GetResponseAvailableProxy)
@@ -28,6 +35,7 @@ async def get_available(
         type_id=type_id,
         lock_time=lock_time)
     await facade.get_available_from_sql()
+    logger.info(f"available_proxies = {len(facade.proxies_models)}")
     await facade.prepare_proxies()
     return facade.result
 
@@ -39,6 +47,7 @@ async def change_proxy(data: S.PatchRequestAvailableProxy = Body()):
         parsed_service = await R.ParsedService.get_name_by_id(data.parsed_service_id)
     else:
         parsed_service = data.parsed_service
+
     # Инициализирую Фасад
     facade = FacadeRotationPatch(
         **data.dump_to_putch_facade(),
