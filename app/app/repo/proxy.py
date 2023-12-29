@@ -1,12 +1,13 @@
 from datetime import datetime
-from loguru import logger
-from sqlalchemy import select, func, update
+
+from sqlalchemy import func, select, update
 from sqlalchemy.orm import selectinload
-from .base_repo import BaseRepo, check_alchemy_problem
+
 import app.models as M
-import app.schemas as S
 from app.db_postgres import async_session
 from app.db_redis import redis_cache
+
+from .base_repo import BaseRepo, check_alchemy_problem
 
 
 class Proxy(BaseRepo):

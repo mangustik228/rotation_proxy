@@ -1,8 +1,9 @@
 from sqlalchemy import text
-from app.services import FacadeRotationAvailable, FacadeRotationPatch
+
+import app.repo as R
 from app.db_postgres import async_session
 from app.db_redis import REDIS
-import app.repo as R
+from app.services import FacadeRotationAvailable, FacadeRotationPatch
 
 
 async def test_facade_rotation_available(insert_proxies_10_proxies):

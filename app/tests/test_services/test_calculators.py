@@ -1,6 +1,7 @@
 from collections import namedtuple
-from app.services import CalculateDelay
 from datetime import datetime
+
+from app.services import CalculateDelay
 
 
 def test_calc_linear():

@@ -1,7 +1,7 @@
-import app.schemas as S
 import app.repo as R
+import app.schemas as S
 from app.exceptions import NotAvailableProxies
-from pydantic import ValidationError
+
 from .facade_base import FacadeRotationBase
 
 

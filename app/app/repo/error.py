@@ -1,10 +1,12 @@
-from .base_repo import BaseRepo
+from collections import namedtuple
+from datetime import datetime, timedelta
+
+from sqlalchemy import desc, select
+
 import app.models as M
 from app.db_postgres import async_session
-from sqlalchemy import select, desc
-from datetime import datetime, timedelta
-from collections import namedtuple
 
+from .base_repo import BaseRepo
 
 block = namedtuple("Block", ["date", "sleep"])
 

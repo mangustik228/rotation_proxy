@@ -1,9 +1,11 @@
 import asyncio
+
 from loguru import logger
-from sqlalchemy import select, insert, delete, update, func
-from sqlalchemy.exc import IntegrityError, DataError
+from sqlalchemy import delete, func, insert, select, update
+from sqlalchemy.exc import DataError, IntegrityError
+
 from app.db_postgres import async_session
-from app.exceptions import DuplicateKey, DateNotValidFormat
+from app.exceptions import DateNotValidFormat, DuplicateKey
 
 
 def check_alchemy_problem(func: asyncio.coroutine):
@@ -16,7 +18,6 @@ def check_alchemy_problem(func: asyncio.coroutine):
                 raise DuplicateKey("Value is already exist")
         except DataError as e:
             logger.error(f"Problem with insert date {kwargs}")
-            print("jopa")
             raise DateNotValidFormat("Date not valid format")
         except Exception as e:
             logger.error(str(e))

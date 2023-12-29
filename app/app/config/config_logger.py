@@ -1,7 +1,9 @@
-import sys
-from loguru import logger
-from app.config import settings
 import os
+import sys
+
+from loguru import logger
+
+from app.config import settings
 
 
 class ConfigLogging:

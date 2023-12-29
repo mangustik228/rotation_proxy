@@ -1,9 +1,11 @@
+from configparser import ConfigParser
 from datetime import datetime
+from typing import Literal
+
+from dotenv import load_dotenv
 from pydantic import BaseModel
 from pydantic_settings import BaseSettings, SettingsConfigDict
-from configparser import ConfigParser
-from dotenv import load_dotenv
-from typing import Literal
+
 from app.utils.functions import get_env_prefix
 
 load_dotenv()

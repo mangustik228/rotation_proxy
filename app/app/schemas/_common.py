@@ -1,5 +1,6 @@
-from pydantic import BaseModel, validator
-from datetime import datetime, timedelta, date
+from datetime import datetime
+
+from pydantic import BaseModel
 
 
 class ValidateDate(BaseModel):

@@ -1,10 +1,11 @@
 from datetime import datetime
-from httpx import AsyncClient
+
 import pytest
-from app.db_postgres import async_session
-from app.db_redis import REDIS
-import app.repo as R
+from httpx import AsyncClient
 from tests.utils import ProxyBuilder
+
+import app.repo as R
+from app.db_redis import REDIS
 
 
 async def test_availables_proxies_simple(

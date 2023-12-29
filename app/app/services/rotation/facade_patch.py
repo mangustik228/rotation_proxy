@@ -1,7 +1,8 @@
-from .facade_base import FacadeRotationBase
-import app.schemas as S
 import app.repo as R
+import app.schemas as S
 from app.exceptions import NotAvailableProxies
+
+from .facade_base import FacadeRotationBase
 
 
 class FacadeRotationPatch(FacadeRotationBase):

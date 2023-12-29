@@ -1,8 +1,8 @@
-from httpx import AsyncClient
 import pytest
-from app.db_redis import REDIS
-import app.repo as R
+from httpx import AsyncClient
 from tests.utils import ProxyBuilderPatch
+
+import app.repo as R
 
 
 async def test_change_proxy_base(insert_5_proxy_to_change, client: AsyncClient):

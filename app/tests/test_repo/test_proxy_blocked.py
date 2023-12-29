@@ -1,6 +1,8 @@
-import pytest
-import app.repo as R
 import asyncio
+
+import pytest
+
+import app.repo as R
 from app.db_redis import REDIS
 
 

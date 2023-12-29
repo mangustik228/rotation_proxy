@@ -1,7 +1,8 @@
-from app.db_postgres import async_session
-import app.repo as R
-from tests.utils import ProxyBuilder
 from sqlalchemy import text
+from tests.utils import ProxyBuilder
+
+import app.repo as R
+from app.db_postgres import async_session
 
 
 async def get_count_items_in_db() -> int:

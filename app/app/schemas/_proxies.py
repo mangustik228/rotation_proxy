@@ -1,10 +1,12 @@
-from datetime import datetime, date
 import re
+from datetime import datetime
 from typing import Literal
-from pydantic import BaseModel, field_validator, ConfigDict, Field
+
+from pydantic import BaseModel, ConfigDict, Field, field_validator
+
+from ._locations import Location
 from ._proxy_services import ProxyService
 from ._proxy_types import ProxyType
-from ._locations import Location
 
 
 class Proxy(BaseModel):
@@ -62,7 +64,7 @@ class PostRequestProxy(BaseModel):
     def valid_server(cls, v):
         try:
             return re.findall(r'\d+\.\d+\.\d+\.\d+', v)[0]
-        except:
+        except IndexError:
             raise ValueError(f'Uncorrect field "server": {v}')
 
 

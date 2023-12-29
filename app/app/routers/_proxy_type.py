@@ -1,8 +1,7 @@
-from fastapi import APIRouter, HTTPException, status, Body
+from fastapi import APIRouter, Body, HTTPException, status
+
 import app.repo as R
 import app.schemas as S
-from app.exceptions import DuplicateKey
-
 
 router = APIRouter(prefix="/types", tags=["TYPES"])
 

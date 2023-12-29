@@ -1,5 +1,6 @@
 from typing import Literal
-from pydantic import BaseModel, field_validator, ValidationError, ConfigDict
+
+from pydantic import BaseModel, ConfigDict, ValidationError, field_validator
 
 
 class ParsedServiceBase(BaseModel):

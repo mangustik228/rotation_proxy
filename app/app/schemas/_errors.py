@@ -1,8 +1,10 @@
 from datetime import datetime
 from typing import Literal
-from pydantic import ConfigDict, BaseModel, Field
-from ._proxies import ProxyLight
+
+from pydantic import BaseModel, ConfigDict, Field
+
 from ._parsed_services import ParsedServiceBase
+from ._proxies import ProxyLight
 
 
 class BaseError(BaseModel):

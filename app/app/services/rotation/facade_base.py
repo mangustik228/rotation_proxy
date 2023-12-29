@@ -1,10 +1,13 @@
-import sqlalchemy as sa
-import app.repo as R
 import random
-from app.exceptions import NotAvailableProxies, NotValidServiceName, NotValidServiceName, NotValidExpire
-from datetime import datetime, timedelta
+from datetime import datetime
+
+import sqlalchemy as sa
 from pydantic import ValidationError
+
+import app.repo as R
 import app.schemas as S
+from app.exceptions import (NotAvailableProxies, NotValidExpire,
+                            NotValidServiceName)
 
 
 class FacadeRotationBase:

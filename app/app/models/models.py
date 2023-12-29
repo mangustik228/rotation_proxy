@@ -1,7 +1,9 @@
 from datetime import datetime
 from typing import List
-from sqlalchemy.orm import mapped_column, Mapped, relationship
-from sqlalchemy import ForeignKey, DateTime, UniqueConstraint
+
+from sqlalchemy import DateTime, ForeignKey, UniqueConstraint
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+
 from app.db_postgres import Base
 
 

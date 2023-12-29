@@ -1,5 +1,6 @@
 from httpx import AsyncClient
-from tests.utils import ProxyBuilderPatch, ProxyBuilder
+from tests.utils import ProxyBuilderPatch
+
 import app.repo as R
 
 

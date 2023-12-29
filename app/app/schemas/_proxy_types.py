@@ -1,5 +1,6 @@
 from typing import Literal
-from pydantic import ConfigDict, BaseModel, Field
+
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class ProxyType(BaseModel):

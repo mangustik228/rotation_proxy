@@ -1,8 +1,9 @@
-from app.db_postgres import async_session
-import app.repo as R
-from sqlalchemy import text
 import pytest
-from app.exceptions import NotValidServiceName, DuplicateKey
+from sqlalchemy import text
+
+import app.repo as R
+from app.db_postgres import async_session
+from app.exceptions import DuplicateKey, NotValidServiceName
 
 
 async def test_get_name_by_id(insert_parsed_service):

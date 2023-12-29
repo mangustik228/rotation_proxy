@@ -1,7 +1,8 @@
-from app.db_redis import REDIS
-import pickle
 import hashlib
+import pickle
 from functools import wraps
+
+from app.db_redis import REDIS
 
 
 def redis_cache(func: callable):

@@ -1,9 +1,10 @@
 from sqlalchemy import select
-from .base_repo import BaseRepo
+
 import app.models as M
 from app.db_postgres import async_session
 from app.exceptions import NotExistedParsedService, NotValidServiceName
-from .base_repo import check_alchemy_problem
+
+from .base_repo import BaseRepo, check_alchemy_problem
 
 
 class ParsedService(BaseRepo):

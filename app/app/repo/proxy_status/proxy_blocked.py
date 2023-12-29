@@ -1,5 +1,6 @@
-from app.db_redis import REDIS
 from loguru import logger
+
+from app.db_redis import REDIS
 
 
 class ProxyBlocked:
@@ -38,7 +39,8 @@ class ProxyBlocked:
 
     @classmethod
     async def where_id_blocked(cls, proxy_id: int):
-        '''Возвращает список в каком сервисе заблокирован данный id, если нигде, то []'''
+        '''Возвращает список в каком сервисе заблокирован данный id, 
+        если нигде не заблокирован, то возвращает []'''
         result: list[bytes] = await REDIS.keys(f'{cls.prefix}*_{proxy_id}')
         return [i.decode("utf-8").split("_")[1] for i in result]
 

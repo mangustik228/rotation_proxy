@@ -1,8 +1,10 @@
 from datetime import datetime
+
+from freezegun import freeze_time
 from sqlalchemy import text
+
 import app.repo as R
 from app.db_postgres import async_session
-from freezegun import freeze_time
 
 
 @freeze_time("2023-12-25T12:00:00")

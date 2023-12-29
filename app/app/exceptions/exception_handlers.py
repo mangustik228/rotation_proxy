@@ -1,6 +1,9 @@
-from fastapi import FastAPI, Request
+from fastapi import FastAPI
 from fastapi.responses import JSONResponse
-from .exceptions import NotAvailableProxies, NotValidServiceName, NotValidExpire, NotExistedParsedService, DuplicateKey
+
+from .exceptions import (DuplicateKey, NotAvailableProxies,
+                         NotExistedParsedService, NotValidExpire,
+                         NotValidServiceName)
 
 
 def register_exceptions_handlers(app: FastAPI):

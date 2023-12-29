@@ -1,5 +1,6 @@
-from app.db_redis import REDIS
 from loguru import logger
+
+from app.db_redis import REDIS
 
 
 class ProxyBusy:
@@ -25,7 +26,7 @@ class ProxyBusy:
 
     @classmethod
     async def is_free(cls, id: int):
-        '''Проверить являеться прокси занятой. 
+        '''Проверить являеться прокси занятой.
         Если свободен возвращает True'''
         result = await REDIS.get(f"{cls.prefix}{id}")
         return result is None
