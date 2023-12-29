@@ -2,7 +2,7 @@ from fastapi.testclient import TestClient
 from tests.utils import ErrorBuilder
 
 
-def test_post_errors(insert_proxies_10_proxies, insert_parsed_service, client: TestClient):
+def test_post_errors(sql_insert_parsed_service, client: TestClient):
     data = ErrorBuilder().build()
     response = client.post("/errors", json=data)
     assert response.status_code == 201, response.json()
@@ -19,10 +19,7 @@ def test_post_errors_wrong_status(client: TestClient):
     assert response.status_code == 404
 
 
-def test_get_errors_by_proxy_id(
-        insert_proxies_10_proxies,
-        insert_3_errors,
-        client: TestClient):
+def test_get_errors_by_proxy_id(sql_insert_3_errors, client: TestClient):
     response = client.get("/errors/proxy/1")
     assert response.status_code == 200
     result = response.json()
@@ -36,11 +33,7 @@ def test_get_errors_by_proxy_id_exception(client: TestClient):
     assert response.status_code == 404
 
 
-def test_get_errors_by_parsed_service(
-    insert_proxies_10_proxies,
-    insert_3_errors,
-    client: TestClient
-):
+def test_get_errors_by_parsed_service(sql_insert_3_errors, client: TestClient):
     response = client.get("/errors/parsed_service/1")
     assert response.status_code == 200
     data = response.json()

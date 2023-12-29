@@ -8,7 +8,7 @@ from app.db_postgres import async_session
 
 
 @freeze_time("2023-12-25T12:00:00")
-async def test_get_last_5(insert_proxies_10_proxies, insert_parsed_services):
+async def test_get_last_5(sql_insert_10_proxies, sql_insert_2_parsed_services):
     q = """
         INSERT INTO 
         error(reason, created_at, proxy_id, parsed_service_id, sleep_time) 

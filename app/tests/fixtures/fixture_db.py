@@ -1,39 +1,39 @@
 import json
+import os
 from datetime import datetime
 
 import pytest
+from alembic import command
+from alembic.config import Config
 from sqlalchemy import insert
 
 import app.models as M
 from app.db_postgres import async_session
 
-from .functions import update_db
-
 
 @pytest.fixture()
-async def clear_db():
-    await update_db()
+async def sql_clear():
+    assert os.getenv("MODE") == "TEST", "base is not test"
+    alembic_cfg = Config("alembic.ini")
+    alembic_cfg.set_section_option("logger_alembic", "level", "WARN")
+    command.downgrade(alembic_cfg, "base")
+    command.upgrade(alembic_cfg, "head")
     yield
-    await update_db()
-
-
-@pytest.fixture(autouse=True, scope="session")
-async def prepare_db():
-    await update_db()
+    command.downgrade(alembic_cfg, "base")
+    command.upgrade(alembic_cfg, "head")
 
 
 @pytest.fixture
-async def insert_parsed_service():
+async def sql_insert_parsed_service(sql_insert_10_proxies):
     async with async_session() as session:
         service = M.ParsedService(name="example-service")
         session.add(service)
         await session.commit()
     yield
-    await update_db()
 
 
 @pytest.fixture
-async def insert_parsed_services():
+async def sql_insert_2_parsed_services(sql_insert_10_proxies):
     async with async_session() as session:
         parsed_service_1 = M.ParsedService(name="example-service")
         parsed_service_2 = M.ParsedService(name="example-service-2")
@@ -41,11 +41,10 @@ async def insert_parsed_services():
         session.add(parsed_service_2)
         await session.commit()
     yield
-    await update_db()
 
 
 @pytest.fixture
-async def insert_3_errors():
+async def sql_insert_3_errors(sql_insert_10_proxies):
     async with async_session() as session:
         service = M.ParsedService(name="example-service")
         for _ in range(3):
@@ -54,12 +53,10 @@ async def insert_3_errors():
             session.add(error)
         await session.commit()
     yield
-    await update_db()
 
 
 @pytest.fixture
-async def insert_proxies_10_proxies():
-    await update_db()
+async def sql_insert_10_proxies(sql_clear):
     with open(f'tests/src/proxies.json', "r") as file:
         data = json.load(file)
     for datum in data:
@@ -69,4 +66,3 @@ async def insert_proxies_10_proxies():
         await session.execute(stmt)
         await session.commit()
     yield
-    await update_db()

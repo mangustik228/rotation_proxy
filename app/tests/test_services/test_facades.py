@@ -6,7 +6,7 @@ from app.db_redis import REDIS
 from app.services import FacadeRotationAvailable, FacadeRotationPatch
 
 
-async def test_facade_rotation_available(clear_redis, insert_proxies_10_proxies):
+async def test_facade_rotation_available(redis_clear, sql_insert_10_proxies):
     facade = FacadeRotationAvailable("example", 4, None, 1, 1, 300)
     await facade.get_available_from_sql()
     # 1 из прокси просроченный
@@ -15,7 +15,7 @@ async def test_facade_rotation_available(clear_redis, insert_proxies_10_proxies)
     assert len(facade.result["data"]) == 4
 
 
-async def test_facade_rotation_available_blocked(clear_redis, insert_proxies_10_proxies):
+async def test_facade_rotation_available_blocked(redis_clear, sql_insert_10_proxies):
     q = "INSERT INTO parsed_service(name) VALUES('test-service')"
     async with async_session() as session:
         await session.execute(text(q))
@@ -29,7 +29,7 @@ async def test_facade_rotation_available_blocked(clear_redis, insert_proxies_10_
     assert len(facade.result["data"]) == 3
 
 
-async def test_facade_rotation_available_buzy(clear_redis, insert_proxies_10_proxies):
+async def test_facade_rotation_available_buzy(redis_clear, sql_insert_10_proxies):
     for i in range(5, 15):
         await REDIS.set(f"busy_{i}", 1)
     facade = FacadeRotationAvailable("example", 10, None, 1, 1, 5)

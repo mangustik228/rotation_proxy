@@ -12,7 +12,7 @@ async def test_proxy_busy_set_get():
     assert not await R.ProxyBusy.is_free(3)
 
 
-async def test_proxy_set_expire(clear_redis):
+async def test_proxy_set_expire(redis_clear):
     assert await R.ProxyBusy.is_free(3)
     await R.ProxyBusy.add(3, 1)
     assert not await R.ProxyBusy.is_free(3)

@@ -6,7 +6,7 @@ import app.repo as R
 from app.db_redis import REDIS
 
 
-async def test_get_empty(clear_redis):
+async def test_get_empty(redis_clear):
     result = await R.ProxyBlocked.get_all()
     assert len(result) == 0
 
@@ -17,7 +17,7 @@ async def test_add():
     assert result == b'1'
 
 
-async def test_get_all(insert_blocked):
+async def test_get_all(redis_insert_blocked_10):
     result = await R.ProxyBlocked.get_all()
     assert isinstance(result[0], str)
     assert len(result) == 8
@@ -26,12 +26,12 @@ async def test_get_all(insert_blocked):
 @pytest.mark.parametrize("service,expected", [
     ("service", 0),
     ("test-service", 4)])
-async def test_get_all_by_service_empty(insert_blocked, service, expected):
+async def test_get_all_by_service_empty(redis_insert_blocked_10, service, expected):
     result = await R.ProxyBlocked.get_all_by_service(service)
     assert len(result) == expected
 
 
-async def test_free(insert_blocked):
+async def test_free(redis_insert_blocked_10):
     await R.ProxyBlocked.free(1, "test-service")
     result = await REDIS.get("blocked_test-service_1")
     assert result == None
@@ -42,7 +42,7 @@ async def test_free(insert_blocked):
     ("test-service", 1, False),
     ("test-service", 11, True),
 ])
-async def test_is_blocked(clear_redis, insert_blocked, service, id, expected):
+async def test_is_blocked(redis_clear, redis_insert_blocked_10, service, id, expected):
     result = await R.ProxyBlocked.is_free(id, service)
     assert result == expected
 
@@ -52,7 +52,7 @@ async def test_is_blocked(clear_redis, insert_blocked, service, id, expected):
     (6, []),
     ("1", ["test-service", "test-service-2"])
 ])
-async def test_where_is_blocked_true(insert_blocked, id, expected):
+async def test_where_is_blocked_true(redis_insert_blocked_10, id, expected):
     data = await R.ProxyBlocked.where_id_blocked(id)
     for datum in data:
         assert datum in expected
@@ -62,7 +62,7 @@ async def test_where_is_blocked_true(insert_blocked, id, expected):
     (1, "test-service", 7),
     (1, "testik", 8),
 ])
-async def test_delete(insert_blocked, id, service, expected):
+async def test_delete(redis_insert_blocked_10, id, service, expected):
     await R.ProxyBlocked.free(id, service)
     result = await REDIS.get(f"blocked_{service}_{id}")
     assert result == None, service

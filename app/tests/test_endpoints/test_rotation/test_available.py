@@ -1,18 +1,18 @@
 from datetime import datetime
 
 import pytest
-
-from tests.utils import ProxyBuilder
 from fastapi.testclient import TestClient
+from httpx import AsyncClient
+from tests.utils import ProxyBuilder
+
 import app.repo as R
 from app.db_redis import REDIS
-from httpx import AsyncClient
 
 
 async def test_availables_proxies_simple(
-        insert_proxies_10_proxies,
-        insert_parsed_services,
-        clear_redis,
+        sql_insert_10_proxies,
+        sql_insert_2_parsed_services,
+        redis_clear,
         async_client: AsyncClient):
     params = {"parsed_service_id": 1}
     response = await async_client.get("/proxies/rotations", params=params)
@@ -22,16 +22,16 @@ async def test_availables_proxies_simple(
 
 
 async def test_availables_proxies_not_full(
-        insert_proxies_10_proxies,
-        insert_parsed_services,
-        clear_redis,
+        sql_insert_10_proxies,
+        sql_insert_2_parsed_services,
+        redis_clear,
         async_client: AsyncClient):
     params = {"parsed_service_id": 1, "location_id": 2}
     response = await async_client.get("/proxies/rotations", params=params)
     assert response.status_code == 404
 
 
-def test_availables_proxies_error(insert_proxies_10_proxies, client: TestClient):
+def test_availables_proxies_error(sql_insert_10_proxies, client: TestClient):
     params = {"parsed_service_id": 5}
     response = client.get("/proxies/rotations", params=params)
     assert response.status_code == 409
@@ -40,9 +40,9 @@ def test_availables_proxies_error(insert_proxies_10_proxies, client: TestClient)
 
 
 async def test_availables_proxies_count(
-        insert_proxies_10_proxies,
-        insert_parsed_services,
-        clear_redis,
+        sql_insert_10_proxies,
+        sql_insert_2_parsed_services,
+        redis_clear,
         async_client: AsyncClient):
     params = {"parsed_service_id": 1, "count": 15}
     response = await async_client.get("/proxies/rotations", params=params)
@@ -53,10 +53,10 @@ async def test_availables_proxies_count(
 
 
 async def test_availables_proxies_types(
-        insert_proxies_10_proxies,
-        insert_parsed_services,
+        sql_insert_10_proxies,
+        sql_insert_2_parsed_services,
         async_client: AsyncClient,
-        clear_redis):
+        redis_clear):
     await R.ProxyType.add_one(name="IPv6")
     builder = ProxyBuilder()
     builder.set_server("100.100.100.100")
@@ -73,10 +73,10 @@ async def test_availables_proxies_types(
 
 
 async def test_availables_proxies_expire(
-        insert_proxies_10_proxies,
-        insert_parsed_services,
+        sql_insert_10_proxies,
+        sql_insert_2_parsed_services,
         async_client: AsyncClient,
-        clear_redis):
+        redis_clear):
     builder = ProxyBuilder()
     builder.set_server("100.100.100.100")
     builder.set_expire(datetime(year=2025, month=12, day=30))
@@ -93,10 +93,10 @@ async def test_availables_proxies_expire(
 
 
 async def test_redis_writer(
-        insert_proxies_10_proxies,
-        insert_parsed_services,
+        sql_insert_10_proxies,
+        sql_insert_2_parsed_services,
         async_client: AsyncClient,
-        clear_redis):
+        redis_clear):
     params = {"parsed_service_id": 1, "count": 3}
     response = await async_client.get("/proxies/rotations", params=params)
     assert response.status_code == 200

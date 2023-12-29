@@ -17,12 +17,12 @@ async def test_count():
     assert result == 0
 
 
-async def test_count_full(insert_proxies_10_proxies):
+async def test_count_full(sql_insert_10_proxies):
     result = await R.Proxy.count_items()
     assert result == 10
 
 
-async def test_add_one(clear_db):
+async def test_add_one(sql_clear):
     builder = ProxyBuilder()
     builder.set_server("100.100.100.100")
     data = builder.build()

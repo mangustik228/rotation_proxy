@@ -1,5 +1,5 @@
-from tests.utils import ProxyServiceBuilder
 from fastapi.testclient import TestClient
+from tests.utils import ProxyServiceBuilder
 
 
 def test_get_services(client: TestClient):
@@ -8,7 +8,7 @@ def test_get_services(client: TestClient):
     assert len(result.json()) == 1
 
 
-def test_post_services(client: TestClient, clear_db):
+def test_post_services(client: TestClient, sql_clear):
     builder = ProxyServiceBuilder()
     builder.set_name("hello world")
     service = builder.build()
@@ -18,14 +18,14 @@ def test_post_services(client: TestClient, clear_db):
     assert result.json()["service"]["id"] == 2
 
 
-def test_post_services_dublicates(client: TestClient, clear_db):
+def test_post_services_dublicates(client: TestClient, sql_clear):
     service = ProxyServiceBuilder().build()
     for _ in range(2):
         result = client.post("/services", json=service)
     assert result.status_code == 409
 
 
-def test_put_services(client: TestClient, clear_db):
+def test_put_services(client: TestClient, sql_clear):
     builder = ProxyServiceBuilder()
     builder.set_name("world")
     service = builder.build()

@@ -1,5 +1,5 @@
-from tests.utils import ProxyTypesBuilder
 from fastapi.testclient import TestClient
+from tests.utils import ProxyTypesBuilder
 
 
 def test_get_list(client: TestClient):
@@ -21,7 +21,7 @@ def test_get_one_empty(client: TestClient):
     assert response.status_code == 404
 
 
-def test_post_proxy(client: TestClient, clear_db):
+def test_post_proxy(client: TestClient, sql_clear):
     proxy_type = ProxyTypesBuilder().build()
     response = client.post("/types", json=proxy_type)
     assert response.status_code == 201
@@ -30,14 +30,14 @@ def test_post_proxy(client: TestClient, clear_db):
     assert data["type"]["name"] == "IPv6"
 
 
-def test_post_proxy_dublicates(client: TestClient, clear_db):
+def test_post_proxy_dublicates(client: TestClient, sql_clear):
     proxy_type = ProxyTypesBuilder().build()
     for i in range(2):
         response = client.post("/types", json=proxy_type)
     assert response.status_code == 409
 
 
-def test_put_proxy(client: TestClient, clear_db):
+def test_put_proxy(client: TestClient, sql_clear):
     proxy_type = ProxyTypesBuilder().build()
     response = client.put("/types/1", json=proxy_type)
     assert response.status_code == 201
@@ -46,13 +46,13 @@ def test_put_proxy(client: TestClient, clear_db):
     assert data["type"]["name"] == "IPv6"
 
 
-def test_put_proxy_empty(client: TestClient, clear_db):
+def test_put_proxy_empty(client: TestClient, sql_clear):
     proxy_type = ProxyTypesBuilder().build()
     response = client.put("/types/2", json=proxy_type)
     assert response.status_code == 404
 
 
-def test_put_get_proxy(client: TestClient, clear_db):
+def test_put_get_proxy(client: TestClient, sql_clear):
     builder = ProxyTypesBuilder()
     proxy_type_name = "shared"
     builder.set_name(proxy_type_name)
