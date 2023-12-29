@@ -1,5 +1,9 @@
-from fastapi import FastAPI
+import asyncio
+from functools import wraps
+
+from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
+from loguru import logger
 
 from .exceptions import (DuplicateKey, NotAvailableProxies,
                          NotExistedParsedService, NotValidExpire,
@@ -7,16 +11,12 @@ from .exceptions import (DuplicateKey, NotAvailableProxies,
 
 
 def register_exceptions_handlers(app: FastAPI):
-    app.add_exception_handler(
-        NotAvailableProxies, not_available_proxies)
-    app.add_exception_handler(
-        NotValidServiceName, not_valid_service_name)
-    app.add_exception_handler(
-        NotValidExpire, not_valid_expire)
-    app.add_exception_handler(
-        NotExistedParsedService, not_exist_parsed_service)
-    app.add_exception_handler(
-        DuplicateKey, duplicate_key)
+    app.add_exception_handler(NotAvailableProxies, not_available_proxies)
+    app.add_exception_handler(NotValidServiceName, not_valid_service_name)
+    app.add_exception_handler(NotValidExpire, not_valid_expire)
+    app.add_exception_handler(DuplicateKey, duplicate_key)
+    app.add_exception_handler(NotExistedParsedService,
+                              not_exist_parsed_service)
 
 
 async def duplicate_key(req, exc: DuplicateKey):

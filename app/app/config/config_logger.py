@@ -11,11 +11,7 @@ class ConfigLogging:
     def setup(cls):
         if not os.path.exists('logs'):
             os.makedirs('logs')
-        if settings.MODE != "TEST":
-            # logger.remove(0)
-            # cls._add_serialized_logger()
-            ...
-        if settings.MODE == "PROD":
+        if settings.MODE == "PROD" or settings.MODE == "DEV":
             cls._add_file_logger()
 
     @classmethod
@@ -32,5 +28,4 @@ class ConfigLogging:
             sink="logs/{time:YYYY-MM-DD}.log",
             rotation=settings.logs.rotation,
             level=settings.logs.level,
-            retention=settings.logs.retention,
             serialize=True)

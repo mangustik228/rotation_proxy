@@ -3,7 +3,6 @@ version: "3.8"
 services:
   web:
     build: ./app
-    command: uvicorn app.main:app --reload --workers 1 --host 0.0.0.0 --port 8000
     volumes:
       - ./app:/app
     ports:
@@ -15,6 +14,12 @@ services:
       - db_redis
     networks:
       - proxy-network
+  
+  web_dev: 
+    extends: 
+      service: web
+    command: uvicorn app.main:app --reload --workers 1 --host 0.0.0.0 --port 8000
+
 
   db_postgres:
     build:

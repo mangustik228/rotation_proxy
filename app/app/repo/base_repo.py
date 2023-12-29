@@ -14,14 +14,15 @@ def check_alchemy_problem(func: asyncio.coroutine):
             return await func(*args, **kwargs)
         except IntegrityError as e:
             if "duplicate key" in e._sql_message():
-                logger.info("Value is already exist")
-                raise DuplicateKey("Value is already exist")
+                msg = f"Value is already exist {kwargs}"
+                logger.info(msg)
+                raise DuplicateKey(msg)
         except DataError as e:
-            logger.error(f"Problem with insert date {kwargs}")
-            raise DateNotValidFormat("Date not valid format")
+            msg = f"Problem with insert date {kwargs}"
+            logger.error(msg)
+            raise DateNotValidFormat(msg)
         except Exception as e:
             logger.error(str(e))
-
     return inner
 
 

@@ -81,10 +81,7 @@ async def delete_proxy(id: int):
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="proxy doesn't exist")
     else:
-        try:
-            await R.Proxy.delete(id=id)
-        except Exception as e:
-            logger.error(str(e))
+        await R.Proxy.delete(id=id)
 
 
 @router.patch("/{id}", response_model=S.PatchResponseProxy)
