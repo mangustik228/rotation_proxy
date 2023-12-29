@@ -1,9 +1,16 @@
+from unittest.mock import patch
+from httpx import AsyncClient
+
 import pytest
 from fixtures.functions import update_db
 from utils import ProxyBuilder
 
 import app.repo as R
 from app.db_redis import REDIS
+from app.middlewares.log_middleware import LogMiddleware
+
+from app.main import app as fastapi_app
+from app.config import settings
 
 
 @pytest.fixture()
@@ -19,3 +26,13 @@ async def insert_5_proxy_to_change():
     yield
     await update_db()
     await REDIS.flushdb()
+
+
+async def mock_middleware_dispatch(self, request, call_next):
+    return await call_next(request)
+
+
+@pytest.fixture(autouse=True)
+def mock_method_to_mock():
+    with patch.object(LogMiddleware, "dispatch", new=mock_middleware_dispatch) as mock_method:
+        yield

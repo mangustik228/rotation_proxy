@@ -1,20 +1,21 @@
 from datetime import datetime
 
 import pytest
-from httpx import AsyncClient
-from tests.utils import ProxyBuilder
 
+from tests.utils import ProxyBuilder
+from fastapi.testclient import TestClient
 import app.repo as R
 from app.db_redis import REDIS
+from httpx import AsyncClient
 
 
 async def test_availables_proxies_simple(
         insert_proxies_10_proxies,
         insert_parsed_services,
         clear_redis,
-        client: AsyncClient):
+        async_client: AsyncClient):
     params = {"parsed_service_id": 1}
-    response = await client.get("/proxies/rotations", params=params)
+    response = await async_client.get("/proxies/rotations", params=params)
     assert response.status_code == 200
     assert response.json()["status"] == "full"
     # assert response.status_code == 200
@@ -24,15 +25,15 @@ async def test_availables_proxies_not_full(
         insert_proxies_10_proxies,
         insert_parsed_services,
         clear_redis,
-        client: AsyncClient):
+        async_client: AsyncClient):
     params = {"parsed_service_id": 1, "location_id": 2}
-    response = await client.get("/proxies/rotations", params=params)
+    response = await async_client.get("/proxies/rotations", params=params)
     assert response.status_code == 404
 
 
-async def test_availables_proxies_error(insert_proxies_10_proxies, client: AsyncClient):
+def test_availables_proxies_error(insert_proxies_10_proxies, client: TestClient):
     params = {"parsed_service_id": 5}
-    response = await client.get("/proxies/rotations", params=params)
+    response = client.get("/proxies/rotations", params=params)
     assert response.status_code == 409
     assert response.json()[
         "detail"] == "Parsed_service with id: 5 doesn't exist"
@@ -42,9 +43,9 @@ async def test_availables_proxies_count(
         insert_proxies_10_proxies,
         insert_parsed_services,
         clear_redis,
-        client: AsyncClient):
+        async_client: AsyncClient):
     params = {"parsed_service_id": 1, "count": 15}
-    response = await client.get("/proxies/rotations", params=params)
+    response = await async_client.get("/proxies/rotations", params=params)
     assert response.status_code == 200
     assert response.json()["status"] == "not full"
     assert isinstance(response.json()["data"], list)
@@ -54,7 +55,7 @@ async def test_availables_proxies_count(
 async def test_availables_proxies_types(
         insert_proxies_10_proxies,
         insert_parsed_services,
-        client: AsyncClient,
+        async_client: AsyncClient,
         clear_redis):
     await R.ProxyType.add_one(name="IPv6")
     builder = ProxyBuilder()
@@ -64,7 +65,7 @@ async def test_availables_proxies_types(
     await R.Proxy.add_one(**data)
 
     params = {"parsed_service_id": 1, "type_id": 2}
-    response = await client.get("/proxies/rotations", params=params)
+    response = await async_client.get("/proxies/rotations", params=params)
     assert response.status_code == 200
     assert response.json()["status"] == "not full"
     assert response.json()["data"][0]["server"] == "100.100.100.100"
@@ -74,7 +75,7 @@ async def test_availables_proxies_types(
 async def test_availables_proxies_expire(
         insert_proxies_10_proxies,
         insert_parsed_services,
-        client: AsyncClient,
+        async_client: AsyncClient,
         clear_redis):
     builder = ProxyBuilder()
     builder.set_server("100.100.100.100")
@@ -83,7 +84,7 @@ async def test_availables_proxies_expire(
     await R.Proxy.add_one(**data)
 
     params = {"parsed_service_id": 1, "expire_proxy": "2025-12-29T12:00:00"}
-    response = await client.get("/proxies/rotations", params=params)
+    response = await async_client.get("/proxies/rotations", params=params)
 
     assert response.status_code == 200
     assert response.json()["status"] == "not full"
@@ -94,10 +95,10 @@ async def test_availables_proxies_expire(
 async def test_redis_writer(
         insert_proxies_10_proxies,
         insert_parsed_services,
-        client: AsyncClient,
+        async_client: AsyncClient,
         clear_redis):
     params = {"parsed_service_id": 1, "count": 3}
-    response = await client.get("/proxies/rotations", params=params)
+    response = await async_client.get("/proxies/rotations", params=params)
     assert response.status_code == 200
     keys: list[bytes] = await REDIS.keys("*")
     keys = [k.decode() for k in keys if "busy_" in k.decode()]
