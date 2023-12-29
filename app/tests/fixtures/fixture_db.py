@@ -14,11 +14,9 @@ from app.db_postgres import async_session
 @pytest.fixture()
 async def sql_clear():
     assert os.getenv("MODE") == "TEST", "base is not test"
+    yield
     alembic_cfg = Config("alembic.ini")
     alembic_cfg.set_section_option("logger_alembic", "level", "WARN")
-    command.downgrade(alembic_cfg, "base")
-    command.upgrade(alembic_cfg, "head")
-    yield
     command.downgrade(alembic_cfg, "base")
     command.upgrade(alembic_cfg, "head")
 

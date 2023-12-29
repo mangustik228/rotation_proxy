@@ -1,12 +1,12 @@
-import pytest
 import logging
+
+import pytest
 from loguru import logger
 
 
 @pytest.fixture(scope="session", autouse=True)
 def disallow_logging():
     logging.disable(logging.INFO)
-    ...
 
 
 @pytest.fixture(scope="session", autouse=True)
