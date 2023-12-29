@@ -4,7 +4,7 @@ from tests.utils import ProxyBuilderPatch
 import app.repo as R
 
 
-async def test_integration(insert_5_proxy_to_change, async_client: AsyncClient):
+async def test_integration(insert_5_proxy_to_change, async_client: AsyncClient, ):
     # Получаем 2 прокси.
     params = {"parsed_service_id": 1, "count": 2}
     response = await async_client.get("/proxies/rotations", params=params)

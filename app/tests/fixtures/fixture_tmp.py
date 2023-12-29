@@ -32,7 +32,7 @@ async def mock_middleware_dispatch(self, request, call_next):
     return await call_next(request)
 
 
-@pytest.fixture(autouse=True)
-def mock_method_to_mock():
+@pytest.fixture
+def mock_middleware_logs():
     with patch.object(LogMiddleware, "dispatch", new=mock_middleware_dispatch) as mock_method:
         yield

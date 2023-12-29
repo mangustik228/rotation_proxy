@@ -11,43 +11,32 @@ class LogMiddleware(BaseHTTPMiddleware):
     def __init__(self, app: FastAPI):
         super().__init__(app)
 
-    async def request_process(self, request: Request, client_ip: str, method: str, url: str):
+    async def request_process(self, request: Request, data: dict, method: str):
+        data["type"] = "request"
         if method == "GET":
-            data = request.query_params.multi_items()
-        if method in ("POST", "PUT", "PATCH", "DEL"):
+            data["request_data"] = request.query_params.multi_items()
+        if method in ("POST", "PUT"):
             await self.set_body(request)
-            data = await request.json()
-        result = {
-            "client_ip": client_ip,
-            "method": method,
-            "url": url,
-            "data": data
-        }
-        logger.info(result)
+            data["request_data"] = await request.json()
+        logger.info(data)
         return data
 
-    async def response_process(self, response: StreamingResponse, client_ip, method, url, request_data):
-        data = {
-            "client_ip": client_ip,
-            "method": method,
-            "url": url,
-            "status_code": (status := response.status_code)
-        }
-        if status in (200, 201):
+    async def response_process(self, response: StreamingResponse, data: dict):
+        data["type"] = "response"
+        data["status"] = (status := response.status_code)
+        if status < 300:
             logger.info(data)
-        else:
-            data["request_data"] = request_data
-            logger.warning(data)
 
     async def dispatch(self, request: Request, call_next: RequestResponseEndpoint) -> Response:
-        client_ip = request.client.host
-        method = request.method
-        url = request.url
+        data = {}
+        data["client_ip"] = request.client.host
+        data["method"] = (method := request.method)
+        data["url"] = request.url
 
-        request_data = await self.request_process(request, client_ip, method, url)
+        await self.request_process(request, data, method)
         response = await call_next(request)
 
-        await self.response_process(response, client_ip, method, url, request_data)
+        await self.response_process(response, data)
         return response
 
     async def set_body(self, request: Request):
