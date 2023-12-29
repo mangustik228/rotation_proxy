@@ -5,14 +5,15 @@ import app.repo as R
 from app.db_redis import REDIS
 
 
-@pytest.mark.skip
-async def test_get_busies(client: AsyncClient):
-    busies = await R.ProxyBusy.get_all()
-    result = []
-    for key, value in busies:
-        item = {}
-        item["id"] = key.split("_")[-1]
-        item["expire"] = value
-        result.append(item)
-    return result
-    # TODO
+async def test_get_busies(clear_redis, client: AsyncClient):
+    for i in range(1, 6):
+        await R.ProxyBusy.add(i)
+    response = await client.get("/proxies/busies")
+    assert len(response.json()) == 5
+
+
+async def test_get_blocked(clear_redis, client: AsyncClient):
+    for i in range(1, 6):
+        await R.ProxyBlocked.add(i, "world")
+    response = await client.get("/proxies/blocks")
+    assert len(response.json()) == 5
