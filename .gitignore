@@ -7,6 +7,10 @@ terminal.ipynb
 app/venv 
 app/.pytest_cache
 app/.vscode 
+app/.coverage
+app/.coveragerc
+app/coverage-report
+
 
 db_postgres/data/
 .vscode/

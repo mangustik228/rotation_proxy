@@ -1,0 +1,7 @@
+.pytest_cache
+.vscode 
+.coverage
+.coveragerc
+coverage-report
+__pycache__
+rotation_proxy.code-workspace

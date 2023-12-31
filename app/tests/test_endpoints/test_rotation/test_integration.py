@@ -57,3 +57,11 @@ async def test_integration(insert_5_proxy_to_change, async_client: AsyncClient, 
     assert response.status_code == 200
     assert response.json()["status"] == "not full"
     assert len(response.json()["data"]) == 4
+
+    response = await async_client.get("/errors/parsed_service/1")
+    data = response.json()
+    assert data["count"] == 4
+    assert data["status"] == "success"
+    assert data["parsed_service"]["id"] == 1
+    assert data["parsed_service"]["name"] == "example-service"
+    assert len(data["errors"]) == 4
