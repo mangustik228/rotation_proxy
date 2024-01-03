@@ -20,6 +20,10 @@ services:
       service: web
     command: uvicorn app.main:app --reload --workers 1 --host 0.0.0.0 --port 8000
 
+  web_prod: 
+    extends: 
+      service: web 
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --workers 4
 
   db_postgres:
     build:
