@@ -2,13 +2,13 @@ from fastapi.testclient import TestClient
 
 
 def test_get_one(sql_insert_2_parsed_services, client: TestClient):
-    response = client.get("/parsed_services/1")
+    response = client.get("/parsed_services/id/1")
     assert response.status_code == 200
     assert response.json()["name"] == "example-service"
 
 
 def test_get_one_empty(client: TestClient):
-    response = client.get("/parsed_services/1")
+    response = client.get("/parsed_services/id/1")
     assert response.status_code == 404
 
 
@@ -38,8 +38,7 @@ def test_post_service_error(sql_clear, client: TestClient):
 
 
 def test_get_by_name(sql_insert_parsed_service, client: TestClient):
-    params = {"name": "example-service"}
-    response = client.get("/parsed_services/name", params=params)
+    response = client.get("/parsed_services/name/example-service")
     assert response.status_code == 200
     data = response.json()
     assert data["status"] == "exist"

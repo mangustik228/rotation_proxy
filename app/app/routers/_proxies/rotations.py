@@ -1,14 +1,22 @@
 from datetime import datetime
-from fastapi import APIRouter, Body, HTTPException
-import app.schemas as S
-import app.repo as R
-from app.services import FacadeRotationAvailable, FacadeRotationPatch, CalculateDelay
+
+from fastapi import APIRouter, Body, Depends, HTTPException
 from loguru import logger
+
+import app.repo as R
+import app.schemas as S
+from app.docs.rotation import (DESCRIPTION_FREE_PROXY,
+                               DESCRIPTION_GET_AVAILABLE,
+                               DESCRIPTION_PATCH_PROXY)
+from app.services import (CalculateDelay, FacadeRotationAvailable,
+                          FacadeRotationPatch)
 
 router = APIRouter(prefix="/proxies/rotations", tags=["ROTATIONS"])
 
 
-@router.get("/free/{id}", response_model=S.GetResponseFreeProxy)
+@router.get("/free/{id}",
+            response_model=S.GetResponseFreeProxy,
+            description=DESCRIPTION_FREE_PROXY)
 async def free_proxy(id: int):
     if await R.ProxyBusy.get(id):
         await R.ProxyBusy.free(id)
@@ -16,24 +24,17 @@ async def free_proxy(id: int):
     raise HTTPException(404, detail=f"Busy proxies not founded")
 
 
-@router.get("", response_model=S.GetResponseAvailableProxy)
-async def get_available(
-        parsed_service_id: int,
-        parsed_service: str | None = None,
-        count: int = 5,
-        location_id: int | None = 1,
-        type_id: int | None = 1,
-        lock_time: int | None = 300,
-        expire_proxy: str | None = None):
-    if parsed_service is None:
-        parsed_service = await R.ParsedService.get_name_by_id(parsed_service_id)
+@router.get("",
+            response_model=S.GetResponseAvailableProxy,
+            description=DESCRIPTION_GET_AVAILABLE)
+async def get_available(params: S.GetRequestAvailableProxy = Depends()):
+    if (parsed_service := params.parsed_service) is None:
+        parsed_service = await R.ParsedService.get_name_by_id(params.parsed_service_id)
+
     facade = FacadeRotationAvailable(
-        parsed_service=parsed_service,
-        count=count,
-        expire_proxy=expire_proxy,
-        location_id=location_id,
-        type_id=type_id,
-        lock_time=lock_time)
+        **params.model_dump(exclude=["parsed_service", "parsed_service_id"]),
+        parsed_service=parsed_service)
+
     await facade.get_available_from_sql()
     logger.info(f"available_proxies = {len(facade.proxies_models)}")
     await facade.prepare_proxies()
@@ -41,7 +42,7 @@ async def get_available(
 
 
 # , response_model=S.PatchResponseAvailableProxy
-@router.patch("")
+@router.patch("", description=DESCRIPTION_PATCH_PROXY)
 async def change_proxy(data: S.PatchRequestAvailableProxy = Body()):
     if data.parsed_service is None:
         parsed_service = await R.ParsedService.get_name_by_id(data.parsed_service_id)

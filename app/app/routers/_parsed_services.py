@@ -6,7 +6,9 @@ import app.schemas as S
 router = APIRouter(prefix="/parsed_services", tags=["PARSED_SERVICES"])
 
 
-@router.get("/name", response_model=S.GetResponseParsedServiceByName)
+@router.get("/name/{name}",
+            response_model=S.GetResponseParsedServiceByName,
+            description="Получить id парсящегося сервиса по его имени.")
 async def get_parsed_service_by_name(name: str):
     result = await R.ParsedService.get_by_name(name)
     if result:
@@ -16,7 +18,19 @@ async def get_parsed_service_by_name(name: str):
     raise HTTPException(status.HTTP_404_NOT_FOUND)
 
 
-@router.get("", response_model=S.GetResponseParsedServiceList)
+@router.get("/id/{id}",
+            response_model=S.ParsedServiceBase,
+            description="Получить имя парсящегося сервиса по id")
+async def get_parsed_service_by_id(id: int):
+    result = await R.ParsedService.get_by_id(id)
+    if result:
+        return result
+    raise HTTPException(status.HTTP_404_NOT_FOUND, "not founded")
+
+
+@router.get("",
+            response_model=S.GetResponseParsedServiceList,
+            description="Получить список всех парсящихся сервисов")
 async def get_parsed_services():
     result = await R.ParsedService.get_all()
     return {
@@ -24,14 +38,6 @@ async def get_parsed_services():
         "count": len(result),
         "parsed_services": result
     }
-
-
-@router.get("/{id}", response_model=S.ParsedServiceBase)
-async def get_parsed_service_by_id(id: int):
-    result = await R.ParsedService.get_by_id(id)
-    if result:
-        return result
-    raise HTTPException(status.HTTP_404_NOT_FOUND, "not founded")
 
 
 @router.post("", status_code=status.HTTP_201_CREATED)

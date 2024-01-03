@@ -13,11 +13,11 @@ from ._proxy_type import router as proxy_type
 
 def register_routers(app: FastAPI):
     app.include_router(proxies_rotations)
-    app.include_router(proxy_busy)
+    app.include_router(parsed_services)
     app.include_router(proxy_blocks)
+    app.include_router(proxy_busy)
     app.include_router(proxies)
     app.include_router(proxy_service)
     app.include_router(location)
     app.include_router(proxy_type)
     app.include_router(error)
-    app.include_router(parsed_services)

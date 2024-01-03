@@ -16,7 +16,17 @@ class AvailableProxy(BaseModel):
 
 
 class GetResponseFreeProxy(BaseModel):
-    status: Literal["success"]
+    status: Literal["success"] = Field(..., description="just description")
+
+
+class GetRequestAvailableProxy(BaseModel):
+    parsed_service_id: int
+    parsed_service: str | None = None
+    count: int = 5
+    location_id: int | None = 1
+    type_id: int | None = 1
+    lock_time: int | None = 300
+    expire_proxy: str | None = None
 
 
 class GetResponseAvailableProxy(BaseModel):
@@ -28,15 +38,15 @@ class GetResponseAvailableProxy(BaseModel):
 class PatchRequestAvailableProxy(BaseModel):
     id: int = Field(alias="proxy_id")
     parsed_service_id: int
-    ignore_hours: int = 24
     parsed_service: str | None = None
     expire_proxy: str | None = None
     location_id: int = 1
     type_id: int = 1
     lock_time: int = 300
-    reason: str
+    reason: str | int
     params: dict[str, Any] | None = None
     logic: Literal["sum_history", "linear"] = "linear"
+    ignore_hours: int = 24
 
     def dump_to_get_facade(self):
         return {

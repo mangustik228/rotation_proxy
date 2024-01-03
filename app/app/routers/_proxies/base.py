@@ -8,41 +8,10 @@ from app.exceptions import DuplicateKey
 router = APIRouter(prefix="/proxies", tags=["PROXIES"])
 
 
-@router.get("", response_model=S.GetResponseProxyList)
-async def get_all_proxies():
-    proxies = await R.Proxy.get_all()
-    total_proxies = await R.Proxy.get_total_count()
-    active_proxies = await R.Proxy.get_active_count()
-    return {
-        "total_count": total_proxies,
-        "total_active_count": active_proxies,
-        "status": "success",
-        "proxies": proxies
-    }
-
-
-@router.get("/{id}", response_model=S.GetResponseProxy)
-async def get_one_proxie(id: int):
-    proxy = await R.Proxy.get_by_id(id)
-    return proxy
-
-
-@router.post("",
-             status_code=status.HTTP_201_CREATED)
-async def post_proxies(data: S.PostRequestProxy = Body()):
-    try:
-        result = await R.Proxy.add_one(**data.model_dump())
-        return {"status": "success",
-                "proxy": result}
-    except DuplicateKey as e:
-        raise HTTPException(
-            status_code=status.HTTP_409_CONFLICT,
-            detail="proxy is already exist.")
-
-
 @router.post("/bulk",
              status_code=status.HTTP_201_CREATED,
-             response_model=S.PostResponseProxyList)
+             response_model=S.PostResponseProxyList,
+             description="Добавить сразу список прокси")
 async def post_bulk_proxies(data: list[S.PostRequestProxy] = Body()):
     success = 0
     errors = 0
@@ -59,7 +28,47 @@ async def post_bulk_proxies(data: list[S.PostRequestProxy] = Body()):
     }
 
 
-@router.put("/{id}", status_code=201, response_model=S.PutResponseProxy)
+@router.get("",
+            response_model=S.GetResponseProxyList,
+            description="Получить все имеющиеся прокси")
+async def get_all_proxies():
+    proxies = await R.Proxy.get_all()
+    total_proxies = await R.Proxy.get_total_count()
+    active_proxies = await R.Proxy.get_active_count()
+    return {
+        "total_count": total_proxies,
+        "total_active_count": active_proxies,
+        "status": "success",
+        "proxies": proxies
+    }
+
+
+@router.get("/{id}",
+            response_model=S.GetResponseProxy,
+            description="Получить прокси по id")
+async def get_one_proxie(id: int):
+    proxy = await R.Proxy.get_by_id(id)
+    return proxy
+
+
+@router.post("",
+             status_code=status.HTTP_201_CREATED,
+             description="Добавить прокси")
+async def post_proxies(data: S.PostRequestProxy = Body()):
+    try:
+        result = await R.Proxy.add_one(**data.model_dump())
+        return {"status": "success",
+                "proxy": result}
+    except DuplicateKey as e:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="proxy is already exist.")
+
+
+@router.put("/{id}",
+            status_code=201,
+            response_model=S.PutResponseProxy,
+            description="Изменить прокси по id. Посылать все данные")
 async def update_proxy(id: int, data: S.PutRequestProxy):
     try:
         result = await R.Proxy.update(id, **data.model_dump())
@@ -74,7 +83,9 @@ async def update_proxy(id: int, data: S.PutRequestProxy):
         raise HTTPException(status.HTTP_409_CONFLICT, str(e))
 
 
-@router.delete("/{id}", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete("/{id}",
+               status_code=status.HTTP_204_NO_CONTENT,
+               description="Удалить прокси")
 async def delete_proxy(id: int):
     result = await R.Proxy.get_by_id(id)
     if result is None:
@@ -84,7 +95,9 @@ async def delete_proxy(id: int):
         await R.Proxy.delete(id=id)
 
 
-@router.patch("/{id}", response_model=S.PatchResponseProxy)
+@router.patch("/{id}",
+              response_model=S.PatchResponseProxy,
+              description="Изменить прокси по id. Посылать только изменяемые поля")
 async def patch_proxy(id: int, data: S.PatchRequestProxy = Body()):
     try:
         result = await R.Proxy.update_fields(id, **data.model_dump(exclude_unset=True))
