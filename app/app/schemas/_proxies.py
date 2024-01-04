@@ -32,6 +32,7 @@ class PostResponseProxy(BaseModel):
 
 
 class GetResponseProxy(Proxy):
+    id: int
     service: ProxyService
     proxy_type: ProxyType
     location: Location
