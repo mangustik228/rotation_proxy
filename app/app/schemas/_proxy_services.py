@@ -14,6 +14,11 @@ class GetResponseProxyServiceList(BaseModel):
     services: list[ProxyService]
 
 
+class GetResponseProxyServiceByName(BaseModel):
+    status: Literal["exist"]
+    id: int
+
+
 class PostRequestProxyService(BaseModel):
     name: str
     description: str | None = None

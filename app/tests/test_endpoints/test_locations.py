@@ -10,6 +10,19 @@ def test_get_locations(client: TestClient):
     assert len(data["locations"]) == 2
 
 
+@pytest.mark.parametrize("name,expected", [("Russia", 1), ("Moscow", 2), ('russia', 1)])
+def test_get_location_id_by_name(client: TestClient, name, expected):
+    response = client.get(f"/locations/name/{name}")
+    assert response.status_code == 200
+    data = response.json()
+    assert data["id"] == expected
+
+
+def test_get_location_id_by_name_error(client: TestClient):
+    response = client.get(f"/locations/name/Germany")
+    assert response.status_code == 404
+
+
 @pytest.mark.parametrize("id,expected,expected_parent_id",
                          [(1, "Russia", None), (2, "Moscow", 1)])
 def test_get_one_location(client: TestClient, id, expected, expected_parent_id):

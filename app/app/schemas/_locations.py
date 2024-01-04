@@ -10,6 +10,11 @@ class Location(BaseModel):
     parent_id: int | None
 
 
+class GetResponseLocationByName(BaseModel):
+    status: Literal["exist"]
+    id: int
+
+
 class GetResponseLocationList(BaseModel):
     status: Literal["success"]
     locations: list["Location"]

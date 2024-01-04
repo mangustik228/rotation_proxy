@@ -16,6 +16,16 @@ async def get_services():
     return {"services": result}
 
 
+@router.get("/name/{name}",
+            response_model=S.GetResponseProxyServiceByName,
+            description="Получить прокси по имени",)
+async def get_service_by_name(name: str):
+    result = await R.ProxyService.get_id_by_name(name)
+    if result:
+        return {"status": "exist", "id": result}
+    raise HTTPException(404, "Not found")
+
+
 @router.get("/{id}",
             response_model=S.ProxyService,
             description="Получить сервис, предоставляющий прокси по id")

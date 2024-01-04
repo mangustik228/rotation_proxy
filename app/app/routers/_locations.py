@@ -14,6 +14,16 @@ async def get_locations():
     return {"status": "success", "locations": result}
 
 
+@router.get("/name/{name}",
+            response_model=S.GetResponseLocationByName,
+            description="Получить прокси по имени",)
+async def get_location_by_name(name: str):
+    result = await R.Location.get_id_by_name(name)
+    if result:
+        return {"status": "exist", "id": result}
+    raise HTTPException(404, "Not found")
+
+
 @router.get("/{id}",
             response_model=S.Location,
             description="Получить геолокацию по id")

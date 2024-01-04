@@ -14,6 +14,16 @@ async def get_types():
     return {"status": "success", "types": result}
 
 
+@router.get("/name/{name}",
+            response_model=S.GetResponseProxyTypeByName,
+            description="Получить прокси по имени",)
+async def get_proxy_type_by_name(name: str):
+    result = await R.ProxyType.get_id_by_name(name)
+    if result:
+        return {"status": "exist", "id": result}
+    raise HTTPException(404, "Not found")
+
+
 @router.get("/{id}",
             response_model=S.ProxyType,
             description="Посмотреть тип прокси по id")

@@ -17,6 +17,11 @@ class GetRequestProxyType(ProxyType):
     ...
 
 
+class GetResponseProxyTypeByName(BaseModel):
+    status: Literal["exist"]
+    id: int
+
+
 class PostRequestProxyType(BaseModel):
     name: str
 

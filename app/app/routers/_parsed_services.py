@@ -10,7 +10,7 @@ router = APIRouter(prefix="/parsed_services", tags=["PARSED_SERVICES"])
             response_model=S.GetResponseParsedServiceByName,
             description="Получить id парсящегося сервиса по его имени.")
 async def get_parsed_service_by_name(name: str):
-    result = await R.ParsedService.get_by_name(name)
+    result = await R.ParsedService.get_id_by_name(name)
     if result:
         return {
             "status": "exist",

@@ -25,5 +25,5 @@ async def test_insert_service_not_valid_name(sql_clear):
 
 
 async def test_get_by_name(sql_insert_parsed_service):
-    result = await R.ParsedService.get_by_name("example-service")
+    result = await R.ParsedService.get_id_by_name("example-service")
     assert result == 1

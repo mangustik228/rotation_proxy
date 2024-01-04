@@ -30,6 +30,15 @@ class BaseRepo:
     model = None
 
     @classmethod
+    async def get_id_by_name(cls, name: str) -> int | None:
+        logger.info(f'GET by name: {name}')
+        async with async_session() as session:
+            stmt = select(cls.model.id).where(
+                func.lower(cls.model.name) == func.lower(name))
+            result = await session.execute(stmt)
+            return result.scalar_one_or_none()
+
+    @classmethod
     async def get_by_id(cls, id: int):
         logger.info(f'GET by id: {id}')
         async with async_session() as session:
