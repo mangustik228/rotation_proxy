@@ -16,6 +16,7 @@ class GetResponseProxyServiceList(BaseModel):
 
 class PostRequestProxyService(BaseModel):
     name: str
+    description: str | None = None
 
 
 class PostResponseProxyService(BaseModel):
@@ -27,6 +28,7 @@ class PostResponseProxyService(BaseModel):
 class PutRequestProxyService(BaseModel):
     model_config = ConfigDict(from_attributes=True)
     name: str
+    description: str | None = None
 
 
 class PutResponseProxyService(BaseModel):
