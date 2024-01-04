@@ -9,6 +9,33 @@ import app.repo as R
 from app.db_redis import REDIS
 
 
+async def test_availables_proxies_location(
+    sql_insert_10_proxies,
+    sql_insert_2_parsed_services,
+    redis_clear,
+    async_client: AsyncClient
+):
+    ...
+    await R.Proxy.update(2, location_id=2)
+    await R.Proxy.update(3, location_id=2)
+    await R.Proxy.update(4, location_id=2)
+    params = {"parsed_service_id": 1, "count": 15}
+    params["location_id"] = 1
+    response = await async_client.get("/proxies/rotations", params=params)
+    data = response.json()
+
+    # Все подходят под Russia
+    assert len(data["data"]) == 9
+
+    await REDIS.flushdb()
+
+    params["location_id"] = 2
+    response = await async_client.get("/proxies/rotations", params=params)
+    data = response.json()
+    # Только Moscow
+    assert len(data["data"]) == 3
+
+
 async def test_availables_proxies_simple(
         sql_insert_10_proxies,
         sql_insert_2_parsed_services,

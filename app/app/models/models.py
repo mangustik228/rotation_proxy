@@ -12,6 +12,8 @@ class Location(Base):
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     name: Mapped[str] = mapped_column(unique=True, nullable=False)
     proxies: Mapped[List["Proxy"]] = relationship(back_populates="location")
+    parent_id: Mapped[int | None] = mapped_column(
+        ForeignKey('location.id'), nullable=True)
 
 
 class ProxyType(Base):

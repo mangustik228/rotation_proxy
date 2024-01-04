@@ -14,7 +14,7 @@ class FacadeRotationBase:
     def __init__(self, parsed_service: str,
                  count: int,
                  expire_proxy: str | None,
-                 location_id: int,
+                 location_id: int | None,
                  type_id: int,
                  lock_time: int):
         self.parsed_service = parsed_service  # look setter

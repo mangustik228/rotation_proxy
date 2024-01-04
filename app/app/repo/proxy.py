@@ -54,29 +54,38 @@ class Proxy(BaseRepo):
             return result.scalar()
 
     @classmethod
-    @check_alchemy_problem
-    async def update_fields(cls, id: int, **data):
-        async with async_session() as session:
-            stmt = update(M.Proxy).where(M.Proxy.id == id).values(
-                **data).returning(M.Proxy)
-            result = await session.execute(stmt)
-            data = result.scalar()
-            await session.commit()
-            return data
-
-    @classmethod
     @redis_cache
-    async def get_available(cls, expire: datetime, location_id: int, type_id: int):
+    async def get_available(cls, expire: datetime, location_id: int | None, type_id: int):
         async with async_session() as session:
-            stmt = select(
-                M.Proxy.id,
-                M.Proxy.server,
-                M.Proxy.port,
-                M.Proxy.username,
-                M.Proxy.password,
-            ).filter(
-                M.Proxy.expire > expire,
-                M.Proxy.location_id == location_id,
-                M.Proxy.type_id == type_id)
+            if location_id is None:
+                stmt = select(
+                    M.Proxy.id,
+                    M.Proxy.server,
+                    M.Proxy.port,
+                    M.Proxy.username,
+                    M.Proxy.password,
+                ).filter(
+                    M.Proxy.expire > expire,
+                    M.Proxy.type_id == type_id)
+            else:
+                location_cte = select(M.Location.id)\
+                    .where(M.Location.id == location_id)\
+                    .cte(recursive=True)
+                location_cte = location_cte\
+                    .union_all(
+                        select(M.Location.id)
+                        .join(location_cte, M.Location.parent_id == location_cte.c.id)
+                    )
+
+                stmt = select(
+                    M.Proxy.id,
+                    M.Proxy.server,
+                    M.Proxy.port,
+                    M.Proxy.username,
+                    M.Proxy.password,
+                ).filter(
+                    M.Proxy.expire > expire,
+                    M.Proxy.location_id.in_(select(location_cte.c.id)),
+                    M.Proxy.type_id == type_id)
             result = await session.execute(stmt)
             return result.mappings().all()

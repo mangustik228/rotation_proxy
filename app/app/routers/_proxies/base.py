@@ -100,7 +100,7 @@ async def delete_proxy(id: int):
               description="Изменить прокси по id. Посылать только изменяемые поля")
 async def patch_proxy(id: int, data: S.PatchRequestProxy = Body()):
     try:
-        result = await R.Proxy.update_fields(id, **data.model_dump(exclude_unset=True))
+        result = await R.Proxy.update(id, **data.model_dump(exclude_unset=True))
     except DuplicateKey as e:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,

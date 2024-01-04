@@ -79,13 +79,12 @@ class BaseRepo:
     async def update(cls, id: int, **data):
         logger.info(f"[{cls.__name__}] try to add update id=[{id}]: {data}")
         async with async_session() as session:
-            async with session.begin():
-                stmt = update(cls.model).where(cls.model.id == id).values(
-                    **data).returning(cls.model)
-                result = await session.execute(stmt)
-                result = result.scalar()
-                await session.commit()
-                return result
+            stmt = update(cls.model).where(cls.model.id == id).values(
+                **data).returning(cls.model)
+            result = await session.execute(stmt)
+            result = result.scalar()
+            await session.commit()
+            return result
 
     @classmethod
     async def count_items(cls):

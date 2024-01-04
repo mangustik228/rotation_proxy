@@ -23,7 +23,7 @@ class GetRequestAvailableProxy(BaseModel):
     parsed_service_id: int
     parsed_service: str | None = None
     count: int = 5
-    location_id: int | None = 1
+    location_id: int | None = None
     type_id: int | None = 1
     lock_time: int | None = 300
     expire_proxy: str | None = None
@@ -40,7 +40,7 @@ class PatchRequestAvailableProxy(BaseModel):
     parsed_service_id: int
     parsed_service: str | None = None
     expire_proxy: str | None = None
-    location_id: int = 1
+    location_id: int | None = None
     type_id: int = 1
     lock_time: int = 300
     reason: str | int
