@@ -16,7 +16,7 @@ async def get_types():
 
 @router.get("/name/{name}",
             response_model=S.GetResponseProxyTypeByName,
-            description="Получить прокси по имени",)
+            description="Получить тип прокси по имени",)
 async def get_proxy_type_by_name(name: str):
     result = await R.ProxyType.get_id_by_name(name)
     if result:

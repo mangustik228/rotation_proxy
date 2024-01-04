@@ -16,7 +16,7 @@ async def get_locations():
 
 @router.get("/name/{name}",
             response_model=S.GetResponseLocationByName,
-            description="Получить прокси по имени",)
+            description="Получить локацию по имени",)
 async def get_location_by_name(name: str):
     result = await R.Location.get_id_by_name(name)
     if result:
