@@ -42,7 +42,9 @@ async def get_available(params: S.GetRequestAvailableProxy = Depends()):
 
 
 # , response_model=S.PatchResponseAvailableProxy
-@router.patch("", description=DESCRIPTION_PATCH_PROXY)
+@router.patch("",
+              description=DESCRIPTION_PATCH_PROXY,
+              response_model=S.PatchResponseAvailableProxy)
 async def change_proxy(data: S.PatchRequestAvailableProxy = Body()):
     if data.parsed_service is None:
         parsed_service = await R.ParsedService.get_name_by_id(data.parsed_service_id)
