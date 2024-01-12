@@ -25,7 +25,7 @@ class FacadeRotationPatch(FacadeRotationBase):
         self.expire_proxy = expire_proxy  # look parent property
         self.location_id = location_id
         self.type_id = type_id
-        self.lock_time = lock_time  # For buzy
+        self.lock_time = lock_time  # For busy
         self.reason = reason
         self.params = params
         self.logic = logic

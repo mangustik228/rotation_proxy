@@ -55,14 +55,9 @@ async def get_one_proxie(id: int):
              status_code=status.HTTP_201_CREATED,
              description="Добавить прокси")
 async def post_proxies(data: S.PostRequestProxy = Body()):
-    try:
-        result = await R.Proxy.add_one(**data.model_dump())
-        return {"status": "success",
-                "proxy": result}
-    except DuplicateKey as e:
-        raise HTTPException(
-            status_code=status.HTTP_409_CONFLICT,
-            detail="proxy is already exist.")
+    result = await R.Proxy.add_one(**data.model_dump())
+    return {"status": "success",
+            "proxy": result}
 
 
 @router.put("/{id}",
@@ -70,17 +65,14 @@ async def post_proxies(data: S.PostRequestProxy = Body()):
             response_model=S.PutResponseProxy,
             description="Изменить прокси по id. Посылать все данные")
 async def update_proxy(id: int, data: S.PutRequestProxy):
-    try:
-        result = await R.Proxy.update(id, **data.model_dump())
-        if result:
-            return {
-                "status": "updated",
-                "proxy": result
-            }
-        else:
-            raise HTTPException(status.HTTP_404_NOT_FOUND, "proxy not founded")
-    except DuplicateKey as e:
-        raise HTTPException(status.HTTP_409_CONFLICT, str(e))
+    result = await R.Proxy.update(id, **data.model_dump())
+    if result:
+        return {
+            "status": "updated",
+            "proxy": result
+        }
+    else:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "proxy not founded")
 
 
 @router.delete("/{id}",

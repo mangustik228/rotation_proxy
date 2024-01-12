@@ -5,11 +5,12 @@ from loguru import logger
 
 import app.repo as R
 import app.schemas as S
-from app.docs.rotation import (DESCRIPTION_FREE_PROXY,
+from app.docs.rotation import (DESCRIPTION_CHANGE_WITHOUT_ERROR,
+                               DESCRIPTION_FREE_PROXY,
                                DESCRIPTION_GET_AVAILABLE,
                                DESCRIPTION_PATCH_PROXY)
 from app.services import (CalculateDelay, FacadeRotationAvailable,
-                          FacadeRotationPatch)
+                          FacadeRotationPatch, FacadeSimpleChange)
 
 router = APIRouter(prefix="/proxies/rotations", tags=["ROTATIONS"])
 
@@ -41,15 +42,25 @@ async def get_available(params: S.GetRequestAvailableProxy = Depends()):
     return facade.result
 
 
-# , response_model=S.PatchResponseAvailableProxy
+@router.put("",
+            description=DESCRIPTION_CHANGE_WITHOUT_ERROR,
+            response_model=S.AvailableProxy)
+async def change_proxy(data: S.PutRequestAvailableProxy):
+    if (parsed_service := data.parsed_service) is None:
+        parsed_service = await R.ParsedService.get_name_by_id(data.parsed_service_id)
+    facade = FacadeSimpleChange(parsed_service=parsed_service)
+    await facade.get_available_from_sql()
+    new_proxy = await facade.get_free_proxy()
+    await facade.free_old_proxy(data.id)
+    return new_proxy
+
+
 @router.patch("",
               description=DESCRIPTION_PATCH_PROXY,
               response_model=S.PatchResponseAvailableProxy)
 async def change_proxy(data: S.PatchRequestAvailableProxy = Body()):
-    if data.parsed_service is None:
+    if (parsed_service := data.parsed_service) is None:
         parsed_service = await R.ParsedService.get_name_by_id(data.parsed_service_id)
-    else:
-        parsed_service = data.parsed_service
 
     # Инициализирую Фасад
     facade = FacadeRotationPatch(

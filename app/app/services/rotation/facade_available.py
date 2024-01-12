@@ -6,6 +6,19 @@ from .facade_base import FacadeRotationBase
 
 
 class FacadeRotationAvailable(FacadeRotationBase):
+    def __init__(self, parsed_service: str,
+                 count: int,
+                 expire_proxy: str | None,
+                 location_id: int | None,
+                 type_id: int,
+                 lock_time: int):
+        self.parsed_service = parsed_service  # look setter
+        self.expire_proxy = expire_proxy  # look setter
+        self.location_id = location_id
+        self.type_id = type_id
+        self.count = count
+        self.lock_time = lock_time
+
     async def prepare_proxies(self):
         '''Проверяет если вообще актуальные прокси'''
         data = []

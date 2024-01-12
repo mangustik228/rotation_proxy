@@ -11,18 +11,17 @@ from app.exceptions import (NotAvailableProxies, NotValidExpire,
 
 
 class FacadeRotationBase:
-    def __init__(self, parsed_service: str,
-                 count: int,
-                 expire_proxy: str | None,
-                 location_id: int | None,
-                 type_id: int,
-                 lock_time: int):
-        self.parsed_service = parsed_service  # look setter
-        self.expire_proxy = expire_proxy  # look setter
+    def __init__(self,
+                 parsed_service: str,
+                 lock_time: int = 300,
+                 location_id: int = 1,
+                 type_id: int = 1,
+                 expire_proxy: str | None = None):
         self.location_id = location_id
         self.type_id = type_id
-        self.count = count
+        self.expire_proxy = expire_proxy
         self.lock_time = lock_time
+        self.parsed_service = parsed_service
 
     async def get_available_from_sql(self):
         self.proxies_models: list[sa.RowMapping] = await R.Proxy.get_available(

@@ -7,7 +7,7 @@ from loguru import logger
 
 from .exceptions import (DuplicateKey, NotAvailableProxies,
                          NotExistedParsedService, NotValidExpire,
-                         NotValidServiceName)
+                         NotValidServiceName, DbProblem)
 
 
 def register_exceptions_handlers(app: FastAPI):
@@ -17,6 +17,11 @@ def register_exceptions_handlers(app: FastAPI):
     app.add_exception_handler(DuplicateKey, duplicate_key)
     app.add_exception_handler(NotExistedParsedService,
                               not_exist_parsed_service)
+    app.add_exception_handler(DbProblem, db_problem)
+
+
+async def db_problem(req, exc: DbProblem):
+    return JSONResponse({"detail": str(exc)}, 500)
 
 
 async def duplicate_key(req, exc: DuplicateKey):

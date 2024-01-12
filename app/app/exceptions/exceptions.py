@@ -1,3 +1,5 @@
+class DbProblem(Exception):
+    ...
 
 
 class DuplicateKey(Exception):

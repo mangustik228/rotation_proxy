@@ -35,6 +35,16 @@ class GetResponseAvailableProxy(BaseModel):
     data: list[AvailableProxy]
 
 
+class PutRequestAvailableProxy(BaseModel):
+    id: int = Field(alias="proxy_id")
+    parsed_service_id: int
+    parsed_service: str | None = None
+    location_id: int | None = None
+    expire_proxy: str | None = None
+    type_id: int = 1
+    lock_time: int = 300
+
+
 class PatchRequestAvailableProxy(BaseModel):
     id: int = Field(alias="proxy_id")
     parsed_service_id: int

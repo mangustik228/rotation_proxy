@@ -10,7 +10,7 @@ class ProxyBusy:
     async def add(cls, id: int, expire: int = 300):
         '''Добавить прокси в "Занятые"'''
         await REDIS.set(f"{cls.prefix}{id}", 1, ex=expire)
-        logger.info(f"proxy {id} is buzy")
+        logger.info(f"proxy {id} is busy")
 
     @classmethod
     async def free(cls, id: int):

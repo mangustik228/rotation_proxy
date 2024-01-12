@@ -5,7 +5,7 @@ from sqlalchemy import delete, func, insert, select, update
 from sqlalchemy.exc import DataError, IntegrityError
 
 from app.db_postgres import async_session
-from app.exceptions import DateNotValidFormat, DuplicateKey
+from app.exceptions import DateNotValidFormat, DuplicateKey, DbProblem
 
 
 def check_alchemy_problem(func: asyncio.coroutine):
@@ -15,7 +15,7 @@ def check_alchemy_problem(func: asyncio.coroutine):
         except IntegrityError as e:
             if "duplicate key" in e._sql_message():
                 msg = f"Value is already exist {kwargs}"
-                logger.info(msg)
+                # logger.info(msg)
                 raise DuplicateKey(msg)
         except DataError as e:
             msg = f"Problem with insert date {kwargs}"
@@ -23,6 +23,7 @@ def check_alchemy_problem(func: asyncio.coroutine):
             raise DateNotValidFormat(msg)
         except Exception as e:
             logger.error(str(e))
+            raise DbProblem(str(e))
     return inner
 
 
@@ -31,7 +32,7 @@ class BaseRepo:
 
     @classmethod
     async def get_id_by_name(cls, name: str) -> int | None:
-        logger.info(f'GET by name: {name}')
+        # logger.info(f'GET by name: {name}')
         async with async_session() as session:
             stmt = select(cls.model.id).where(
                 func.lower(cls.model.name) == func.lower(name))
@@ -40,7 +41,7 @@ class BaseRepo:
 
     @classmethod
     async def get_by_id(cls, id: int):
-        logger.info(f'GET by id: {id}')
+        # logger.info(f'GET by id: {id}')
         async with async_session() as session:
             stmt = select(cls.model).where(cls.model.id == id)
             result = await session.execute(stmt)
@@ -48,7 +49,7 @@ class BaseRepo:
 
     @classmethod
     async def get_all(cls):
-        logger.info(f'[{cls.__name__}] get all')
+        # logger.info(f'[{cls.__name__}] get all')
         async with async_session() as session:
             stmt = select(cls.model)
             result = await session.execute(stmt)
@@ -56,7 +57,7 @@ class BaseRepo:
 
     @classmethod
     async def find_one_or_none(cls, count, **filter_by):
-        logger.info(f"[{cls.__name__}] try to find count: {count}")
+        # logger.info(f"[{cls.__name__}] try to find count: {count}")
         async with async_session() as session:
             stmt = select(cls.model).filter_by(*filter_by).limit(count)
             result = await session.execute(stmt)
@@ -65,7 +66,7 @@ class BaseRepo:
     @classmethod
     @check_alchemy_problem
     async def add_one(cls, **data) -> int:
-        logger.info(f"[{cls.__name__}] try to add one: {data}")
+        # logger.info(f"[{cls.__name__}] try to add one: {data}")
         async with async_session() as session:
             async with session.begin():
                 stmt = insert(cls.model).values(
@@ -77,7 +78,7 @@ class BaseRepo:
 
     @classmethod
     async def delete(cls, **filter_by):
-        logger.info(f"[{cls.__name__}] try to add delete: {filter_by}")
+        # logger.info(f"[{cls.__name__}] try to add delete: {filter_by}")
         async with async_session() as session:
             stmt = delete(cls.model).filter_by(**filter_by)
             await session.execute(stmt)
@@ -86,7 +87,7 @@ class BaseRepo:
     @classmethod
     @check_alchemy_problem
     async def update(cls, id: int, **data):
-        logger.info(f"[{cls.__name__}] try to add update id=[{id}]: {data}")
+        # logger.info(f"[{cls.__name__}] try to add update id=[{id}]: {data}")
         async with async_session() as session:
             stmt = update(cls.model).where(cls.model.id == id).values(
                 **data).returning(cls.model)
