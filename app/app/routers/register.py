@@ -9,9 +9,11 @@ from ._proxies.busies import router as proxy_busy
 from ._proxies.rotations import router as proxies_rotations
 from ._proxy_service import router as proxy_service
 from ._proxy_type import router as proxy_type
+from ._stats import router as stats
 
 
 def register_routers(app: FastAPI):
+    app.include_router(stats)
     app.include_router(proxies_rotations)
     app.include_router(parsed_services)
     app.include_router(proxy_blocks)

@@ -1,7 +1,7 @@
 from collections import namedtuple
 from datetime import datetime, timedelta
 
-from sqlalchemy import desc, select
+from sqlalchemy import desc, func, select
 
 import app.models as M
 from app.db_postgres import async_session
@@ -44,3 +44,52 @@ class Error(BaseRepo):
                 .where(cls.model.parsed_service_id == parsed_service_id)
             result = await session.execute(stmt)
             return result.scalars().all()
+
+    @classmethod
+    async def get_count_by_service_id_last_time(cls, parsed_service_id: int, hours: int):
+        time = datetime.utcnow() - timedelta(hours=hours)
+        async with async_session() as session:
+            stmt = select(func.count())\
+                .select_from(cls.model)\
+                .where(cls.model.created_at > time)\
+                .where(cls.model.parsed_service_id == parsed_service_id)
+            result = await session.execute(stmt)
+            return result.scalar_one()
+
+    @classmethod
+    async def get_count_errors_by_service(cls, parsed_service_id):
+        async with async_session() as session:
+            stmt = select(func.count())\
+                .select_from(cls.model)\
+                .where(cls.model.parsed_service_id == parsed_service_id)
+            result = await session.execute(stmt)
+            return result.scalar_one()
+
+    @classmethod
+    async def get_time_last_error(cls, parsed_service_id):
+        async with async_session() as session:
+            stmt = select(func.min(cls.model.created_at))\
+                .select_from(cls.model)\
+                .where(cls.model.parsed_service_id == parsed_service_id)
+            result = await session.execute(stmt)
+            return result.scalar_one()
+
+    @classmethod
+    async def get_group_errors_by_service(cls, service_id: int):
+        async with async_session() as session:
+            stmt = select(cls.model.reason, func.count())\
+                .group_by(cls.model.reason)\
+                .where(cls.model.parsed_service_id == service_id)
+            result = await session.execute(stmt)
+            return result.mappings().all()
+
+    @classmethod
+    async def group_by_reasons(cls):
+        async with async_session() as session:
+            stmt = select(
+                cls.model.reason,
+                M.ParsedService.name,
+                func.count(cls.model.reason))\
+                .group_by(cls.model.reason, M.ParsedService.name).join(M.ParsedService)
+            result = await session.execute(stmt)
+            return result.mappings().all()

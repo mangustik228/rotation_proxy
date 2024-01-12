@@ -1,5 +1,9 @@
 tags_metadata = [
     {
+        "name": "STATS",
+        "description": "Получение статистики по работе сервера",
+    },
+    {
         "name": "ROTATIONS",
         "description": "**Основные методы** для ротации прокси",
     },

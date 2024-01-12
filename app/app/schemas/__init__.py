@@ -9,3 +9,4 @@ from ._proxies_busies import *
 from ._proxies_rotation import *
 from ._proxy_services import *
 from ._proxy_types import *
+from ._stats import *
