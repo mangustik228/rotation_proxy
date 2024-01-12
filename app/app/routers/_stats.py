@@ -9,7 +9,7 @@ from collections import Counter
 router = APIRouter(prefix="/stats", tags=["STATS"])
 
 
-@router.get("/common")
+@router.get("/common", response_model=S.GetResponseStatsCommon)
 async def get_base_stats():
     total_proxies = await R.Proxy.get_total_count()
     available_proxies = await R.Proxy.get_active_count()
@@ -24,7 +24,7 @@ async def get_base_stats():
         "available_proxies": available_proxies,
         "available_by_services": available_by_services,
         "busies": len(busies),
-        "blockss": blocks
+        "blocks": blocks
     }
 
 

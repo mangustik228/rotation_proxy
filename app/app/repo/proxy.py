@@ -96,6 +96,7 @@ class Proxy(BaseRepo):
             stmt = select(M.Service.name, func.count())\
                 .select_from(cls.model)\
                 .group_by(M.Service.name)\
+                .where(M.Proxy.expire > datetime.now())\
                 .join(M.Service)
             result = await session.execute(stmt)
             return result.mappings().all()
