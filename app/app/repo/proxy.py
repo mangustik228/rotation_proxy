@@ -89,3 +89,13 @@ class Proxy(BaseRepo):
                     M.Proxy.type_id == type_id)
             result = await session.execute(stmt)
             return result.mappings().all()
+
+    @classmethod
+    async def get_active_by_services(cls):
+        async with async_session() as session:
+            stmt = select(M.Service.name, func.count())\
+                .select_from(cls.model)\
+                .group_by(M.Service.name)\
+                .join(M.Service)
+            result = await session.execute(stmt)
+            return result.mappings().all()

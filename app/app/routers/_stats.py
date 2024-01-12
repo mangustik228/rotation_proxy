@@ -4,13 +4,40 @@ from fastapi import APIRouter, Query
 
 import app.repo as R
 import app.schemas as S
+from collections import Counter
 
 router = APIRouter(prefix="/stats", tags=["STATS"])
+
+
+@router.get("/common")
+async def get_base_stats():
+    total_proxies = await R.Proxy.get_total_count()
+    available_proxies = await R.Proxy.get_active_count()
+    available_by_services = await R.Proxy.get_active_by_services()
+    busies = await R.ProxyBusy.get_all()
+    blocks = Counter()
+    for blocked in await R.ProxyBlocked.get_all():
+        blocks[blocked.split("_")[1]] += 1
+
+    return {
+        "total_proxies": total_proxies,
+        "available_proxies": available_proxies,
+        "available_by_services": available_by_services,
+        "busies": len(busies),
+        "blockss": blocks
+    }
 
 
 @router.get("/reasons")
 async def get_group_errors_by_reason():
     stats = await R.Error.group_by_reasons()
+    return stats
+
+
+@router.get("/errors/{service}")
+async def get_group_errors_by_service(service):
+    service_id = await R.ParsedService.get_id_by_name(service)
+    stats = await R.Error.get_group_errors_by_service(service_id)
     return stats
 
 
@@ -39,10 +66,3 @@ async def get_stats_by_service(service: str, hours: int = 24):
         "errors_all_time": errors_all_time.result(),
         "last_error": last_error.result()
     }
-
-
-@router.get("/errors/{service}")
-async def get_group_errors_by_service(service):
-    service_id = await R.ParsedService.get_id_by_name(service)
-    stats = await R.Error.get_group_errors_by_service(service_id)
-    return stats
