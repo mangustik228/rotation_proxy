@@ -1,31 +1,44 @@
 import asyncio
+from collections import Counter
 
 from fastapi import APIRouter, Query
 
 import app.repo as R
 import app.schemas as S
-from collections import Counter
 
 router = APIRouter(prefix="/stats", tags=["STATS"])
 
 
-@router.get("/common", response_model=S.GetResponseStatsCommon)
+@router.get("/common",
+            response_model=S.GetResponseStatsCommon
+            )
 async def get_base_stats():
-    total_proxies = await R.Proxy.get_total_count()
-    available_proxies = await R.Proxy.get_active_count()
-    available_by_services = await R.Proxy.get_active_by_services()
-    busies = await R.ProxyBusy.get_all()
-    blocks = Counter()
-    for blocked in await R.ProxyBlocked.get_all():
-        blocks[blocked.split("_")[1]] += 1
+
+    total_proxies = asyncio.create_task(R.Proxy.get_total_count())
+    available_proxies = asyncio.create_task(R.Proxy.get_active_count())
+    available_by_services = asyncio.create_task(
+        R.Proxy.get_active_by_services())
+    busies = asyncio.create_task(R.ProxyBusy.get_all())
+    blocks = asyncio.create_task(R.ProxyBlocked.get_all())
+    await asyncio.gather(total_proxies, available_proxies, available_by_services, busies, blocks)
+    blocks_counter = Counter()
+    for blocked in blocks.result():
+        blocks_counter[blocked.split("_")[1]] += 1
 
     return {
-        "total_proxies": total_proxies,
-        "available_proxies": available_proxies,
-        "available_by_services": available_by_services,
-        "busies": len(busies),
-        "blocks": blocks
+        "total_proxies": total_proxies.result(),
+        "available_proxies": available_proxies.result(),
+        "busies": len(busies.result()),
+        "available_by_services": available_by_services.result(),
+        "blocks": blocks_counter
     }
+
+
+@router.get("/expires",
+            response_model=list[S.GetResponseStatsExpires])
+async def get_stats_by_expire():
+    stats_by_expire = await R.Proxy.get_stats_by_expire()
+    return stats_by_expire
 
 
 @router.get("/reasons")

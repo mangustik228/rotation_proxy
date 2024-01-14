@@ -100,3 +100,14 @@ class Proxy(BaseRepo):
                 .join(M.Service)
             result = await session.execute(stmt)
             return result.mappings().all()
+
+    @classmethod
+    async def get_stats_by_expire(cls):
+        async with async_session() as session:
+            stmt = select(M.Service.name.label('service'), M.Proxy.expire, func.count())\
+                .select_from(M.Proxy)\
+                .join(M.Service)\
+                .where(M.Proxy.expire >= func.now())\
+                .group_by(M.Service.name, M.Proxy.expire)
+            result = await session.execute(stmt)
+            return result.mappings().all()

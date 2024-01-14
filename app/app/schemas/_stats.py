@@ -16,6 +16,12 @@ class ServiceInfo(BaseModel):
     count: int
 
 
+class GetResponseStatsExpires(BaseModel):
+    service: str
+    count: int
+    expire: datetime
+
+
 class GetResponseStatsCommon(BaseModel):
     total_proxies: int
     available_proxies: int
