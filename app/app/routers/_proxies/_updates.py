@@ -2,10 +2,9 @@ from fastapi import APIRouter
 from loguru import logger
 
 import app.repo as R
-from app.config import settings
-from app.exceptions import DuplicateKey
-from app.services import ProxyIoService
 import app.schemas as S
+from app.config import settings
+from app.services import ProxyIoService
 
 router = APIRouter(prefix="/updates", tags=["UPDATES"])
 

@@ -1,9 +1,7 @@
 from fastapi import HTTPException
 from fastapi import APIRouter, status, Body
-from loguru import logger
 import app.schemas as S
 import app.repo as R
-from app.exceptions import DuplicateKey
 
 router = APIRouter(prefix="/proxies", tags=["PROXIES"])
 
@@ -79,10 +77,5 @@ async def delete_proxy(id: int):
               response_model=S.PatchResponseProxy,
               description="Изменить прокси по id. Посылать только изменяемые поля")
 async def patch_proxy(id: int, data: S.PatchRequestProxy = Body()):
-    try:
-        result = await R.Proxy.update(id, **data.model_dump(exclude_unset=True))
-    except DuplicateKey as e:
-        raise HTTPException(
-            status_code=status.HTTP_409_CONFLICT,
-            detail=str(e))
+    result = await R.Proxy.update(id, **data.model_dump(exclude_unset=True))
     return {"status": "updated", "proxy": result}
