@@ -24,3 +24,15 @@ class NotExistedParsedService(Exception):
 
 class DateNotValidFormat(Exception):
     ...
+
+
+class ProblemWithService(Exception):
+    ...
+
+
+class NoIdentifyTypeId(Exception):
+    ...
+
+
+class NoIdentifyCountryCode(Exception):
+    ...

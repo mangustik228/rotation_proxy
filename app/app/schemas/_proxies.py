@@ -46,7 +46,7 @@ class GetResponseProxyList(BaseModel):
 
 
 class PostResponseProxyList(BaseModel):
-    status: Literal["created"]
+    status: Literal["created", "not created"]
     count_added: int
     count_errors: int
 

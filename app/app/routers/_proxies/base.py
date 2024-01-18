@@ -13,19 +13,7 @@ router = APIRouter(prefix="/proxies", tags=["PROXIES"])
              response_model=S.PostResponseProxyList,
              description="Добавить сразу список прокси")
 async def post_bulk_proxies(data: list[S.PostRequestProxy] = Body()):
-    success = 0
-    errors = 0
-    for datum in data:
-        try:
-            await R.Proxy.add_one(**datum.model_dump())
-            success += 1
-        except DuplicateKey as e:
-            errors += 1
-    return {
-        "status": "created",
-        "count_added": success,
-        "count_errors": errors
-    }
+    return await R.Proxy.add_many(data)
 
 
 @router.get("",

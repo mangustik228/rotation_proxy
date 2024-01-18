@@ -6,6 +6,7 @@ from sqlalchemy.exc import DataError, IntegrityError
 
 from app.db_postgres import async_session
 from app.exceptions import DateNotValidFormat, DuplicateKey, DbProblem
+import app.schemas as S
 
 
 def check_alchemy_problem(func: asyncio.coroutine):
@@ -75,6 +76,22 @@ class BaseRepo:
                 result = result.scalar()
                 await session.commit()
                 return result
+
+    @classmethod
+    async def add_many(cls, proxies: list[S.PostRequestProxy]):
+        success = 0
+        errors = 0
+        for proxy in proxies:
+            try:
+                await cls.add_one(**proxy.model_dump())
+                success += 1
+            except DuplicateKey as e:
+                errors += 1
+        return {
+            "status": "created" if success else "not created",
+            "count_added": success,
+            "count_errors": errors
+        }
 
     @classmethod
     async def delete(cls, **filter_by):

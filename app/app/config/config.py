@@ -3,7 +3,6 @@ from datetime import datetime
 from typing import Literal
 
 from dotenv import load_dotenv
-from pydantic import BaseModel
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 from app.utils.functions import get_env_prefix
@@ -35,7 +34,18 @@ class _Database(BaseSettings):
         return f"postgresql://{self.user}:{self.password}@{self.host}:{self.port}/{self.db}"
 
 
-class _Logs(BaseModel):
+class _ProxyIo(BaseSettings):
+    model_config = SettingsConfigDict(
+        env_prefix="PROXY_IO_")
+    api_key: str
+    url: str
+
+
+class _Services(BaseSettings):
+    proxy_io: _ProxyIo = _ProxyIo()
+
+
+class _Logs(BaseSettings):
     rotation: str = _config_ini.get('logs', 'rotation')
     level: str = _config_ini.get('logs', 'level')
     path: str = datetime.now().strftime('logs/%Y_%m_%d_log.log')
@@ -53,6 +63,7 @@ class _Settings(BaseSettings):
     name: str = _config_ini.get('default', 'name')
     APIKEY: str
     redis: _Redis = _Redis()
+    services: _Services = _Services()
 
 
 settings = _Settings()
