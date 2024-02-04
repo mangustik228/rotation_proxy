@@ -8,7 +8,7 @@ from loguru import logger
 from .exceptions import (DbProblem, DuplicateKey, NoIdentifyCountryCode,
                          NoIdentifyTypeId, NotAvailableProxies,
                          NotExistedParsedService, NotValidExpire,
-                         NotValidServiceName, ProblemWithService)
+                         NotValidServiceName, ProblemWithService, NotAvailableProxiesInService)
 
 
 def register_exceptions_handlers(app: FastAPI):
@@ -21,6 +21,7 @@ def register_exceptions_handlers(app: FastAPI):
     app.add_exception_handler(ProblemWithService, error_500)
     app.add_exception_handler(NoIdentifyCountryCode, error_500)
     app.add_exception_handler(NoIdentifyTypeId, error_500)
+    app.add_exception_handler(NotAvailableProxiesInService, error_404)
 
 
 async def error_500(req, exc: DbProblem):

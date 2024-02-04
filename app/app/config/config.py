@@ -41,8 +41,16 @@ class _ProxyIo(BaseSettings):
     url: str
 
 
+class _SpaceProxy(BaseSettings):
+    model_config = SettingsConfigDict(
+        env_prefix="SPACEPROXY_")
+    api_key: str
+    url: str
+
+
 class _Services(BaseSettings):
     proxy_io: _ProxyIo = _ProxyIo()
+    spaceproxy: _SpaceProxy = _SpaceProxy()
 
 
 class _Logs(BaseSettings):

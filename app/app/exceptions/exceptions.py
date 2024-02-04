@@ -36,3 +36,7 @@ class NoIdentifyTypeId(Exception):
 
 class NoIdentifyCountryCode(Exception):
     ...
+
+
+class NotAvailableProxiesInService(Exception):
+    ...

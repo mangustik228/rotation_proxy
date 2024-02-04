@@ -1,10 +1,8 @@
 from datetime import datetime
 
 from httpx import AsyncClient
-from loguru import logger
 
 import app.schemas as S
-from app.config import settings
 from app.exceptions import (NoIdentifyCountryCode, NoIdentifyTypeId,
                             ProblemWithService)
 
