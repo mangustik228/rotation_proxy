@@ -2,6 +2,7 @@ from fastapi import APIRouter, HTTPException, status
 
 import app.repo as R
 import app.schemas as S
+from app.services import transform_data_from_orm_dict
 
 router = APIRouter(prefix="/errors", tags=["ERRORS"])
 
@@ -21,6 +22,12 @@ async def get_errors_by_proxy(id: int) -> S.GetResponseErrorByProxy:
         "proxy": proxy,
         "errors": errors
     }
+
+
+@router.get("/group_by_services")
+async def group_by_services():
+    errors = await R.Error.get_stats_by_services()
+    return transform_data_from_orm_dict(errors)
 
 
 @router.get("/parsed_service/{id}",

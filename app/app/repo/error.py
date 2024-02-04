@@ -93,3 +93,26 @@ class Error(BaseRepo):
                 .group_by(cls.model.reason, M.ParsedService.name).join(M.ParsedService)
             result = await session.execute(stmt)
             return result.mappings().all()
+
+    @classmethod
+    async def get_stats_by_services(cls):
+        '''
+            SELECT s.name, e.reason, p.id, count(*)
+            FROM error e 
+            JOIN proxy p ON p.id = e.proxy_id
+            JOIN service s ON p.service_id = s.id
+            GROUP BY s.name, p.id, e.reason
+        '''
+        async with async_session() as session:
+            stmt = select(
+                M.Service.name,
+                M.Error.reason,
+                M.Proxy.id,
+                func.count().label("error_count")
+            )\
+                .select_from(M.Error)\
+                .join(M.Proxy, M.Proxy.id == M.Error.proxy_id)\
+                .join(M.Service, M.Service.id == M.Proxy.service_id)\
+                .group_by(M.Service.name, M.Error.reason, M.Proxy.id)
+            result = await session.execute(stmt)
+            return result.mappings().all()
