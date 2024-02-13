@@ -34,23 +34,30 @@ class _Database(BaseSettings):
         return f"postgresql://{self.user}:{self.password}@{self.host}:{self.port}/{self.db}"
 
 
-class _ProxyIo(BaseSettings):
+class BaseProxyService(BaseSettings):
+    api_key: str
+    url: str
+
+
+class _ProxyIo(BaseProxyService):
     model_config = SettingsConfigDict(
         env_prefix="PROXY_IO_")
-    api_key: str
-    url: str
 
 
-class _SpaceProxy(BaseSettings):
+class _SpaceProxy(BaseProxyService):
     model_config = SettingsConfigDict(
         env_prefix="SPACEPROXY_")
-    api_key: str
-    url: str
+
+
+class _ProxyNet(BaseProxyService):
+    model_config = SettingsConfigDict(
+        env_prefix="PROXY_NET_")
 
 
 class _Services(BaseSettings):
     proxy_io: _ProxyIo = _ProxyIo()
     spaceproxy: _SpaceProxy = _SpaceProxy()
+    proxy_net: _ProxyNet = _ProxyNet()
 
 
 class _Logs(BaseSettings):

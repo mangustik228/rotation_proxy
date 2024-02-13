@@ -18,6 +18,8 @@ def check_alchemy_problem(func: asyncio.coroutine):
                 msg = f"Value is already exist {kwargs}"
                 # logger.info(msg)
                 raise DuplicateKey(msg)
+            else:
+                raise DbProblem(str(e))
         except DataError as e:
             msg = f"Problem with insert date {kwargs}"
             logger.error(msg)
