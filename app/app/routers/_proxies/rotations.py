@@ -8,7 +8,8 @@ import app.schemas as S
 from app.docs.rotation import (DESCRIPTION_CHANGE_WITHOUT_ERROR,
                                DESCRIPTION_FREE_PROXY,
                                DESCRIPTION_GET_AVAILABLE,
-                               DESCRIPTION_PATCH_PROXY)
+                               DESCRIPTION_PATCH_PROXY,
+                               DESCRIPTION_ONE_PROXY)
 from app.services import (CalculateDelay, FacadeRotationAvailable,
                           FacadeRotationPatch, FacadeSimpleChange)
 
@@ -23,6 +24,21 @@ async def free_proxy(id: int):
         await R.ProxyBusy.free(id)
         return {"status": "success"}
     raise HTTPException(404, detail=f"Busy proxies not founded")
+
+
+@router.get("/one",
+            response_model=S.GetResponseOneProxy,
+            description=DESCRIPTION_ONE_PROXY)
+async def get_one_proxy(params: S.GetRequestOneProxy = Depends()):
+    if (parsed_service := params.parsed_service) is None:
+        parsed_service = await R.ParsedService.get_name_by_id(params.parsed_service_id)
+    facade = FacadeSimpleChange(
+        **params.model_dump(exclude=["parsed_service_id", "parsed_service"]), parsed_service=parsed_service)
+
+    await facade.get_available_from_sql()
+    logger.info(f"available_proxies = {len(facade.proxies_models)}")
+    new_proxy = await facade.get_free_proxy()
+    return new_proxy
 
 
 @router.get("",
@@ -48,7 +64,9 @@ async def get_available(params: S.GetRequestAvailableProxy = Depends()):
 async def change_proxy(data: S.PutRequestAvailableProxy):
     if (parsed_service := data.parsed_service) is None:
         parsed_service = await R.ParsedService.get_name_by_id(data.parsed_service_id)
-    facade = FacadeSimpleChange(parsed_service=parsed_service)
+    facade = FacadeSimpleChange(
+        **data.model_dump(exclude=["id", "parsed_service", "parsed_service_id"]),
+        parsed_service=parsed_service)
     await facade.get_available_from_sql()
     new_proxy = await facade.get_free_proxy()
     await facade.free_old_proxy(data.id)

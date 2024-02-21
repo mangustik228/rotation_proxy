@@ -15,6 +15,19 @@ class AvailableProxy(BaseModel):
         return f'{parsing_service}_{self.id}'
 
 
+class GetResponseOneProxy(AvailableProxy):
+    ...
+
+
+class GetRequestOneProxy(BaseModel):
+    parsed_service_id: int
+    parsed_service: str | None = None
+    location_id: int | None = None
+    expire_proxy: str | None = None
+    type_id: int = 1
+    lock_time: int = 300
+
+
 class GetResponseFreeProxy(BaseModel):
     status: Literal["success"] = Field(..., description="just description")
 
