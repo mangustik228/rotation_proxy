@@ -61,7 +61,7 @@ async def get_available(params: S.GetRequestAvailableProxy = Depends()):
 @router.put("",
             description=DESCRIPTION_CHANGE_WITHOUT_ERROR,
             response_model=S.AvailableProxy)
-async def change_proxy(data: S.PutRequestAvailableProxy):
+async def change_proxy_without_error(data: S.PutRequestAvailableProxy):
     if (parsed_service := data.parsed_service) is None:
         parsed_service = await R.ParsedService.get_name_by_id(data.parsed_service_id)
     facade = FacadeSimpleChange(
@@ -76,7 +76,7 @@ async def change_proxy(data: S.PutRequestAvailableProxy):
 @router.patch("",
               description=DESCRIPTION_PATCH_PROXY,
               response_model=S.PatchResponseAvailableProxy)
-async def change_proxy(data: S.PatchRequestAvailableProxy = Body()):
+async def change_proxy_with_error(data: S.PatchRequestAvailableProxy = Body()):
     if (parsed_service := data.parsed_service) is None:
         parsed_service = await R.ParsedService.get_name_by_id(data.parsed_service_id)
 

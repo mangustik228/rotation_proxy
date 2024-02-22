@@ -98,7 +98,7 @@ class PatchRequestAvailableProxy(BaseModel):
     def dump_to_sql_error(self):
         return {
             "proxy_id": self.id,
-            "reason": self.reason,
+            "reason": str(self.reason),
             "parsed_service_id": self.parsed_service_id
         }
 
