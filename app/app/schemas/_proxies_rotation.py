@@ -29,7 +29,8 @@ class GetRequestOneProxy(BaseModel):
 
 
 class GetResponseFreeProxy(BaseModel):
-    status: Literal["success"] = Field(..., description="just description")
+    status: Literal["success",
+                    "proxies doesn't found"] = Field(..., description="just description")
 
 
 class GetRequestAvailableProxy(BaseModel):

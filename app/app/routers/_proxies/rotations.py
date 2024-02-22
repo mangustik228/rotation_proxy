@@ -23,7 +23,7 @@ async def free_proxy(id: int):
     if await R.ProxyBusy.get(id):
         await R.ProxyBusy.free(id)
         return {"status": "success"}
-    raise HTTPException(404, detail=f"Busy proxies not founded")
+    return {"status": "proxies doesn't found"}
 
 
 @router.get("/one",
