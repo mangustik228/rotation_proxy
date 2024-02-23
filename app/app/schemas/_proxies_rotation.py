@@ -90,7 +90,7 @@ class PatchRequestAvailableProxy(BaseModel):
             "location_id": self.location_id,
             "type_id": self.type_id,
             "lock_time": self.lock_time,
-            "reason": self.reason,
+            "reason": str(self.reason),
             "params": self.params,
             "logic": self.logic
         }
