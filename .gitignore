@@ -10,7 +10,7 @@ app/.vscode
 app/.coverage
 app/.coveragerc
 app/coverage-report
-
+app/rotation_proxy.code-workspace
 
 db_postgres/data/
 .vscode/
